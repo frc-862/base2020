@@ -157,4 +157,8 @@ gradle-app.setting
 bin/
 
 
+.idea
+.idea/*
+
+
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
