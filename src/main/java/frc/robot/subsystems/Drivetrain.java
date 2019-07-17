@@ -58,5 +58,33 @@ public class Drivetrain extends SendableSubsystemBase
     right2.set(right);
 //    right3.set(right);
   }
+
+  public void setVelocity(double left, double right) {
+    // TODO implement
+  }
+
+  public void resetDistance() {
+      // TODO implement
+  }
+
+  public double getLeftDistance() {
+    // TODO implement
+    return 0;
+  }
+
+  public double getRightDistance() {
+    // TODO implement
+    return 0;
+  }
+
+  public double getLeftVelocity() {
+    // TODO implement
+    return 0;
+  }
+
+  public double getRightVelocity() {
+      // TODO implement
+      return 0;
+  }
 }
 

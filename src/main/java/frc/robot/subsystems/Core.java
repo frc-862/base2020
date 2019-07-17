@@ -22,4 +22,12 @@ public class Core extends SendableSubsystemBase
   public Core() {
   }
 
+    public void resetNavx() {
+      //TODO do something
+    }
+
+  public double getYaw() {
+      // TODO implement
+      return 0;
+  }
 }
