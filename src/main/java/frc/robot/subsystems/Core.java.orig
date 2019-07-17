@@ -17,17 +17,17 @@ import frc.robot.commands.ArcadeDrive;
 public class Core extends SendableSubsystemBase
 {
 
-    Compressor compressor = new Compressor(11);
+  Compressor compressor = new Compressor(11);
 
-    public Core() {
-    }
+  public Core() {
+  }
 
     public void resetNavx() {
-        //TODO do something
+      //TODO do something
     }
 
-    public double getYaw() {
-        // TODO implement
-        return 0;
-    }
+  public double getYaw() {
+      // TODO implement
+      return 0;
+  }
 }
