@@ -2,8 +2,8 @@ package frc.lightning;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.experimental.command.Command;
+import edu.wpi.first.wpilibj.experimental.command.CommandScheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,79 +40,6 @@ public class LightningRobot extends TimedRobot {
     Command autonomousCommand;
     SendableChooser<Command> chooser = new SendableChooser<>();
 
-    Command elevatorPos;
-    SendableChooser<Command> elevatorChooser = new SendableChooser<>();
-    String gamePiece;
-    SendableChooser<String> gamePieceChooser = new SendableChooser<>();
-    String startPos;
-    SendableChooser<String> startPosChooser = new SendableChooser<>();
-    String genDestin;
-    SendableChooser<String> genDestinChooser = new SendableChooser<>();
-    String specificDestin;
-    SendableChooser<String> specificDestinChooser = new SendableChooser<>();
-
-    public Command getSelectedElevatorPos() {
-        return elevatorChooser.getSelected();
-    }
-    public String getSelectedGamePiece() {
-        return gamePieceChooser.getSelected();
-    }
-    public String getSelectedStartPos() {
-        return startPosChooser.getSelected();
-    }
-    public String getSelectedGenDestin() {
-        return genDestinChooser.getSelected();
-    }
-    public String getSelectedSpecificDestin() {
-        return specificDestinChooser.getSelected();
-    }
-
-    int elevatorPosCount = 0;
-    public void registerElevatorPos(String name, Command command) {
-        if (elevatorPosCount == 0) {
-            elevatorChooser.setDefaultOption(name, command);
-        } else {
-            elevatorChooser.addOption(name, command);
-        }
-        elevatorPosCount += 1;
-    }
-    int gamePieceCount = 0;
-    public void registerGamePiece(String name, String val) {
-        if (gamePieceCount == 0) {
-            gamePieceChooser.setDefaultOption(name, val);
-        } else {
-            gamePieceChooser.addOption(name, val);
-        }
-        gamePieceCount++;
-    }
-    int startPosCount = 0;
-    public void registerStartPos(String name, String val) {
-        if (startPosCount == 0) {
-            startPosChooser.setDefaultOption(name, val);
-        } else {
-            startPosChooser.addOption(name, val);
-        }
-        startPosCount++;
-    }
-    int genDestinCount = 0;
-    public void registerGenDestin(String name, String val) {
-        if (genDestinCount == 0) {
-            genDestinChooser.setDefaultOption(name, val);
-        } else {
-            genDestinChooser.addOption(name, val);
-        }
-        genDestinCount++;
-    }
-    int specificDestinCount = 0;
-    public void registerSpecificDestin(String name, String val) {
-        if (specificDestinCount == 0) {
-            specificDestinChooser.setDefaultOption(name, val);
-        } else {
-            specificDestinChooser.addOption(name, val);
-        }
-        specificDestinCount++;
-    }
-
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -123,15 +50,10 @@ public class LightningRobot extends TimedRobot {
     public void robotInit() {
         System.out.println("LightningRobot.robotInit");
         System.out.println("Starting time:" + Timer.getFPGATimestamp());
-//        constants = new Constants();
+        constants = new Constants();
         constants.readFromFile();
 
         SmartDashboard.putData("Auto Mode", chooser);
-        SmartDashboard.putData("Auto Elevator Pos", elevatorChooser);
-        SmartDashboard.putData("Auto Game Piece", gamePieceChooser);
-        SmartDashboard.putData("Auto Start Pos", startPosChooser);
-        SmartDashboard.putData("Auto General Destination", genDestinChooser);
-        SmartDashboard.putData("Auto Specific Destination", specificDestinChooser);
 
         // By this point all datalog fields should be registered
         DataLogger.preventNewDataElements();
@@ -147,15 +69,12 @@ public class LightningRobot extends TimedRobot {
             .getEntry();
             FaultCode.setNetworkTableEntry(code, nte);
         });
-
-        //Scheduler.getInstance().setSubsystem("Core");
     }
 
     double getLoopTime() {
         return loopTime;
     }
 
-    int autoCommandCount = 0;
     /**
      * The first command registered will be the default command
      *
@@ -164,6 +83,7 @@ public class LightningRobot extends TimedRobot {
      *                use an actual instance new MyCommand()
      *
      */
+    int autoCommandCount = 0;
     public void registerAutonomousCommmand(String name, Command command) {
         if (autoCommandCount == 0) {
             chooser.setDefaultOption(name, command);
@@ -204,6 +124,8 @@ public class LightningRobot extends TimedRobot {
             DataLogger.logData();
             loopTime = Timer.getFPGATimestamp() - time;
         }
+
+        CommandScheduler.getInstance().run();
     }
 
     /**
@@ -251,11 +173,6 @@ public class LightningRobot extends TimedRobot {
         System.out.println("disabledInit");
     }
 
-    @Override
-    public void disabledPeriodic() {
-        Scheduler.getInstance().run();
-    }
-
     /**
      * The default implementation handles getting the selected command
      * from Shuffleboard.
@@ -273,16 +190,8 @@ public class LightningRobot extends TimedRobot {
 
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {
-            autonomousCommand.start();
+            autonomousCommand.schedule();
         }
-    }
-
-    /**
-     * This function is called periodically during autonomous.
-     */
-    @Override
-    public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
     }
 
     @Override
@@ -295,13 +204,5 @@ public class LightningRobot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
-    }
-
-    /**
-     * This function is called periodically during operator control.
-     */
-    @Override
-    public void teleopPeriodic() {
-        Scheduler.getInstance().run();
     }
 }

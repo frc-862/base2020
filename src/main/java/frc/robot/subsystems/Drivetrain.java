@@ -7,11 +7,16 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
+import frc.lightning.logging.DataLogger;
 import frc.robot.commands.ArcadeDrive;
 
+import javax.xml.crypto.Data;
 import java.util.function.Consumer;
 
 
@@ -19,22 +24,50 @@ public class Drivetrain extends SendableSubsystemBase
 {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
-    CANSparkMax left1 = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax left2 = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax left3 = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax left1;
+    CANEncoder left1Encoder;
+    CANSparkMax left2;
+    CANSparkMax left3;
 
-    CANSparkMax right1 = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax right2 = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax right3 = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax right1;
+    CANEncoder right1Encoder;
+    CANSparkMax right2;
+    CANSparkMax right3;
+
+    SpeedControllerGroup leftGroup;
+    SpeedControllerGroup rightGroup;
+    DifferentialDrive drive;
 
     public Drivetrain() {
+        left1 = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
+        left1Encoder = new CANEncoder(left1);
+        left2 = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
+        left3 = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+        right1 = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
+        right1Encoder = new CANEncoder(right1);
+        right2 = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
+        right3 = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
+
         left2.setInverted(true);
         right1.setInverted(true);
         right3.setInverted(true);
 
         withEachMotor((m) -> m.setOpenLoopRampRate(0.5));
 
+        leftGroup = new SpeedControllerGroup(left1, left2, left3);
+        rightGroup = new SpeedControllerGroup(right1, right2, right3);
+        drive = new DifferentialDrive(leftGroup, rightGroup);
+
         setDefaultCommand(new ArcadeDrive(this));
+
+        DataLogger.addDataElement("leftVelocity", () -> left1Encoder.getVelocity());
+        DataLogger.addDataElement("rightVelocity", () -> right1Encoder.getVelocity());
+    }
+
+    @Override
+    public void periodic() {
+
     }
 
     private void withEachMotor(Consumer<CANSparkMax> op) {
@@ -49,14 +82,19 @@ public class Drivetrain extends SendableSubsystemBase
     public void setPower(double left, double right) {
         left *= 0.5;
         right *= 0.5;
+        drive.tankDrive(left, right, false);
+    }
 
-        left1.set(left);
-        left2.set(left);
-//    left3.set(left);
+    public void arcadeDrive(double speed, double rotation) {
+        drive.arcadeDrive(speed, rotation, false);
+    }
 
-        right1.set(right);
-        right2.set(right);
-//    right3.set(right);
+    public void curvatureDrive(double speed, double rotation) {
+        drive.curvatureDrive(speed, rotation, false);
+    }
+
+    public void curvatureDrive(double speed, double rotation, boolean quickTurn) {
+        drive.curvatureDrive(speed, rotation, quickTurn);
     }
 
     public void setVelocity(double left, double right) {
@@ -64,27 +102,24 @@ public class Drivetrain extends SendableSubsystemBase
     }
 
     public void resetDistance() {
-        // TODO implement
+        left1Encoder.setPosition(0);
+        right1Encoder.setPosition(0);
     }
 
     public double getLeftDistance() {
-        // TODO implement
-        return 0;
+        return left1Encoder.getPosition();
     }
 
     public double getRightDistance() {
-        // TODO implement
-        return 0;
+        return right1Encoder.getPosition();
     }
 
     public double getLeftVelocity() {
-        // TODO implement
-        return 0;
+        return left1Encoder.getVelocity();
     }
 
     public double getRightVelocity() {
-        // TODO implement
-        return 0;
+        return right1Encoder.getVelocity();
     }
 }
 

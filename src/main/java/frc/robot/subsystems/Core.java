@@ -7,27 +7,31 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
-import frc.robot.commands.ArcadeDrive;
+import com.kauailabs.navx.frc.AHRS;
+import frc.lightning.logging.DataLogger;
 
 
 public class Core extends SendableSubsystemBase
 {
-
-    Compressor compressor = new Compressor(11);
+    Compressor compressor;
+    AHRS navx;
 
     public Core() {
+        compressor = new Compressor(11);
+        navx = new AHRS(SPI.Port.kMXP);
+
+        DataLogger.addDataElement("Heading", () -> getYaw());
     }
 
     public void resetNavx() {
-        //TODO do something
+        navx.reset();
     }
 
     public double getYaw() {
-        // TODO implement
-        return 0;
+        return navx.getYaw();
     }
 }
+

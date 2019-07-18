@@ -14,14 +14,6 @@ public class ArcadeDrive extends SendableCommandBase {
 
     @Override
     public void execute() {
-        double left = Robot.oi.getThrottle();
-        double right = left;
-        double turn = Robot.oi.getTurn();
-
-        left -= turn;
-        right += turn;
-
-        drivetrain.setPower(left, right);
+        drivetrain.curvatureDrive(Robot.oi.getThrottle(), Robot.oi.getTurn(), Robot.oi.getQuickTurn());
     }
-
 }
