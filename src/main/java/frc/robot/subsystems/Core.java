@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
+import frc.robot.Robot;
 
 
 public class Core extends SendableSubsystemBase
@@ -24,14 +26,27 @@ public class Core extends SendableSubsystemBase
         navx = new AHRS(SPI.Port.kMXP);
 
         DataLogger.addDataElement("Heading", () -> getYaw());
+        //public double getContinuousHeading() { return navx.getAngle(); }
+//        SmartDashboard.getNumber("get Yaw", getYaw());
+//        SmartDashboard.getNumber("get Roll", getRoll());
+//        SmartDashboard.getNumber("get pitch", getPitch());
+//        SmartDashboard.getNumber("get Angle", getAngle());
     }
-
+    public void periodic() {
+        SmartDashboard.getNumber("get Yaw", getYaw());
+        SmartDashboard.getNumber("get Roll", getRoll());
+        SmartDashboard.getNumber("get pitch", getPitch());
+        SmartDashboard.getNumber("get Angle", getAngle());
+    }
     public void resetNavx() {
         navx.reset();
     }
 
-    public double getYaw() {
-        return navx.getYaw();
+    public double getYaw() { return (navx.getYaw());}
+    public double getRoll(){ return navx.getRoll();}
+    public double getPitch(){ return navx.getPitch();}
+    public double getAngle(){ return navx.getAngle();}
+    public double getAngleAdj(){ return navx.getAngleAdjustment();}
     }
-}
+
 
