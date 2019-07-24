@@ -49,9 +49,12 @@ public class Drivetrain extends SendableSubsystemBase
         right2 = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
         right3 = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
 
+        left3.setInverted(false);
         left2.setInverted(true);
-        right1.setInverted(true);
-        right3.setInverted(true);
+        left1.setInverted(false);
+        right1.setInverted(false);
+        right2.setInverted(true);
+        right3.setInverted(false);
 
         withEachMotor((m) -> m.setOpenLoopRampRate(0.5));
 
@@ -94,7 +97,7 @@ public class Drivetrain extends SendableSubsystemBase
     }
 
     public void curvatureDrive(double speed, double rotation, boolean quickTurn) {
-        drive.curvatureDrive(speed, rotation, quickTurn);
+        drive.curvatureDrive(speed*.5, -rotation, quickTurn);
     }
 
     public void setVelocity(double left, double right) {
