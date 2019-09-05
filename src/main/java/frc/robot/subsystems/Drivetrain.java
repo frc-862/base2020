@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
 import frc.lightning.logging.DataLogger;
 import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.TankDrive;
+import frc.robot.commands.VelocityTankDrive;
 
 import javax.xml.crypto.Data;
 import java.util.function.Consumer;
@@ -36,33 +38,34 @@ public class Drivetrain extends SendableSubsystemBase
 
     SpeedControllerGroup leftGroup;
     SpeedControllerGroup rightGroup;
+
     DifferentialDrive drive;
 
     public Drivetrain() {
         left1 = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
         left1Encoder = new CANEncoder(left1);
         left2 = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-        left3 = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
+        // left3 = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
 
         right1 = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
         right1Encoder = new CANEncoder(right1);
         right2 = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
-        right3 = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
+        //right3 = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-        left3.setInverted(false);
+        //left3.setInverted(false);
         left2.setInverted(true);
         left1.setInverted(false);
         right1.setInverted(false);
         right2.setInverted(true);
-        right3.setInverted(false);
+        //right3.setInverted(false);
 
         withEachMotor((m) -> m.setOpenLoopRampRate(0.5));
 
-        leftGroup = new SpeedControllerGroup(left1, left2, left3);
-        rightGroup = new SpeedControllerGroup(right1, right2, right3);
+        leftGroup = new SpeedControllerGroup(left1, left2/*, left3*/);
+        rightGroup = new SpeedControllerGroup(right1, right2/*, right3*/);
         drive = new DifferentialDrive(leftGroup, rightGroup);
 
-        setDefaultCommand(new ArcadeDrive(this));
+        setDefaultCommand(new VelocityTankDrive(this));
 
         DataLogger.addDataElement("leftVelocity", () -> left1Encoder.getVelocity());
         DataLogger.addDataElement("rightVelocity", () -> right1Encoder.getVelocity());
@@ -76,10 +79,10 @@ public class Drivetrain extends SendableSubsystemBase
     private void withEachMotor(Consumer<CANSparkMax> op) {
         op.accept(left1);
         op.accept(left2);
-        op.accept(left3);
+        //op.accept(left3);
         op.accept(right1);
         op.accept(right2);
-        op.accept(right3);
+        //op.accept(right3);
     }
 
     public void setPower(double left, double right) {
@@ -98,6 +101,10 @@ public class Drivetrain extends SendableSubsystemBase
 
     public void curvatureDrive(double speed, double rotation, boolean quickTurn) {
         drive.curvatureDrive(speed*.5, -rotation, quickTurn);
+    }
+
+    public void tankDrive(double left, double right){
+        drive.tankDrive(left, right, true);
     }
 
     public void setVelocity(double left, double right) {

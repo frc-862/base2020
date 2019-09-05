@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,7 +16,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-    XboxController driver = new XboxController(0);
+    XboxController driver = new XboxController(2);
+
+    Joystick rightJoy = new Joystick(1);
+    Joystick leftJoy = new Joystick(0);
 
     public double getThrottle() {
         final double stick = driver.getRawAxis(1);
@@ -30,4 +34,13 @@ public class OI {
     public boolean getQuickTurn() {
         return driver.getRawButton(1);
     }
+
+    public double getRightThrottle() {
+        return -rightJoy.getRawAxis(1);
+    }
+
+    public double getLeftThrottle() {
+        return -leftJoy.getRawAxis(1);
+    }
+
 }

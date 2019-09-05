@@ -37,6 +37,7 @@ public class Robot extends LightningRobot {
         oi = new OI();
     }
     public void robotInit() {
+        super.robotInit();
         Robot.core.resetNavx();
 
     }
