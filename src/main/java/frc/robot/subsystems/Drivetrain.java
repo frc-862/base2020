@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -17,40 +18,47 @@ import frc.lightning.logging.DataLogger;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.VelocityTankDrive;
+import frc.robot.misc.Gains;
+import frc.robot.misc._Gains;
 
 import javax.xml.crypto.Data;
 import java.util.function.Consumer;
 
 
-public class Drivetrain extends SendableSubsystemBase
-{
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
+public class Drivetrain extends SendableSubsystemBase {
+
     CANSparkMax left1;
-    CANEncoder left1Encoder;
+    public CANEncoder left1Encoder;
     CANSparkMax left2;
     CANSparkMax left3;
+    public CANPIDController leftPIDFController;
 
     CANSparkMax right1;
-    CANEncoder right1Encoder;
+    public CANEncoder right1Encoder;
     CANSparkMax right2;
     CANSparkMax right3;
+    public CANPIDController rightPIDFController;
 
     SpeedControllerGroup leftGroup;
     SpeedControllerGroup rightGroup;
 
     DifferentialDrive drive;
 
+    public _Gains leftGains;
+    public _Gains rightGains;
+
     public Drivetrain() {
         left1 = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
         left1Encoder = new CANEncoder(left1);
         left2 = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
         // left3 = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
+        leftPIDFController = left1.getPIDController();
 
         right1 = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
         right1Encoder = new CANEncoder(right1);
         right2 = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
         //right3 = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
+        rightPIDFController = right1.getPIDController();
 
         //left3.setInverted(false);
         left2.setInverted(true);
@@ -64,6 +72,26 @@ public class Drivetrain extends SendableSubsystemBase
         leftGroup = new SpeedControllerGroup(left1, left2/*, left3*/);
         rightGroup = new SpeedControllerGroup(right1, right2/*, right3*/);
         drive = new DifferentialDrive(leftGroup, rightGroup);
+
+        /*                      P    I    D   FF   Iz   MaxOutput   MinOutput  MaxRPM */
+        leftGains = new _Gains(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+        /*                       P    I    D   FF   Iz   MaxOutput   MinOutput  MaxRPM */
+        rightGains = new _Gains(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+        leftPIDFController.setP(leftGains.getkP());
+        leftPIDFController.setI(leftGains.getkI());
+        leftPIDFController.setD(leftGains.getkD());
+        leftPIDFController.setFF(leftGains.getkFF());
+        leftPIDFController.setIZone(leftGains.getkIz());
+        leftPIDFController.setOutputRange(leftGains.getkMinOutput(), leftGains.getkMaxOutput());
+
+        rightPIDFController.setP(rightGains.getkP());
+        rightPIDFController.setI(rightGains.getkI());
+        rightPIDFController.setD(rightGains.getkD());
+        rightPIDFController.setFF(rightGains.getkFF());
+        rightPIDFController.setIZone(rightGains.getkIz());
+        rightPIDFController.setOutputRange(rightGains.getkMinOutput(), leftGains.getkMaxOutput());
 
         setDefaultCommand(new VelocityTankDrive(this));
 
