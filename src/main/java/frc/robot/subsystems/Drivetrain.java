@@ -11,10 +11,14 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.ControlType;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
 import frc.lightning.logging.DataLogger;
+import frc.robot.Constants;
+import frc.robot.RobotMap;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.TankDrive;
 import frc.robot.commands.VelocityTankDrive;
@@ -24,19 +28,22 @@ import frc.robot.misc._Gains;
 import javax.xml.crypto.Data;
 import java.util.function.Consumer;
 
-
 public class Drivetrain extends SendableSubsystemBase {
 
     CANSparkMax left1;
-    public CANEncoder left1Encoder;
     CANSparkMax left2;
     CANSparkMax left3;
+    
+    public CANEncoder left1Encoder;
+
     public CANPIDController leftPIDFController;
 
     CANSparkMax right1;
-    public CANEncoder right1Encoder;
     CANSparkMax right2;
     CANSparkMax right3;
+
+    public CANEncoder right1Encoder;
+
     public CANPIDController rightPIDFController;
 
     SpeedControllerGroup leftGroup;
@@ -44,59 +51,61 @@ public class Drivetrain extends SendableSubsystemBase {
 
     DifferentialDrive drive;
 
-    public _Gains leftGains;
-    public _Gains rightGains;
+    public Drivetrain(boolean velocity) {
 
-    public Drivetrain() {
-        left1 = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
+        left1 = new CANSparkMax(RobotMap.LEFT_1_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        left2 = new CANSparkMax(RobotMap.LEFT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        left3 = new CANSparkMax(RobotMap.LEFT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        
         left1Encoder = new CANEncoder(left1);
-        left2 = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-        // left3 = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
+
         leftPIDFController = left1.getPIDController();
 
-        right1 = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
+        right1 = new CANSparkMax(RobotMap.RIGHT_1_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        right2 = new CANSparkMax(RobotMap.RIGHT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        right3 = new CANSparkMax(RobotMap.RIGHT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+
         right1Encoder = new CANEncoder(right1);
-        right2 = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
-        //right3 = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
+
         rightPIDFController = right1.getPIDController();
 
-        //left3.setInverted(false);
-        left2.setInverted(true);
         left1.setInverted(false);
+        left2.setInverted(true);
+        left3.setInverted(false);
         right1.setInverted(false);
         right2.setInverted(true);
-        //right3.setInverted(false);
+        right3.setInverted(false);
 
-        withEachMotor((m) -> m.setOpenLoopRampRate(0.5));
+        withEachMotor((m) -> m.setOpenLoopRampRate(Constants.OPEN_LOOP_RAMP_RATE));
 
-        leftGroup = new SpeedControllerGroup(left1, left2/*, left3*/);
-        rightGroup = new SpeedControllerGroup(right1, right2/*, right3*/);
+        leftGroup = new SpeedControllerGroup(left1, left2, left3);
+        rightGroup = new SpeedControllerGroup(right1, right2, right3);
+
         drive = new DifferentialDrive(leftGroup, rightGroup);
 
-        /*                      P    I    D   FF   Iz   MaxOutput   MinOutput  MaxRPM */
-        leftGains = new _Gains(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        leftPIDFController.setP(Constants.leftGains.getkP());
+        leftPIDFController.setI(Constants.leftGains.getkI());
+        leftPIDFController.setD(Constants.leftGains.getkD());
+        leftPIDFController.setFF(Constants.leftGains.getkFF());
+        leftPIDFController.setIZone(Constants.leftGains.getkIz());
+        leftPIDFController.setOutputRange(Constants.leftGains.getkMinOutput(), Constants.leftGains.getkMaxOutput());
 
-        /*                       P    I    D   FF   Iz   MaxOutput   MinOutput  MaxRPM */
-        rightGains = new _Gains(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        rightPIDFController.setP(Constants.rightGains.getkP());
+        rightPIDFController.setI(Constants.rightGains.getkI());
+        rightPIDFController.setD(Constants.rightGains.getkD());
+        rightPIDFController.setFF(Constants.rightGains.getkFF());
+        rightPIDFController.setIZone(Constants.rightGains.getkIz());
+        rightPIDFController.setOutputRange(Constants.rightGains.getkMinOutput(), Constants.leftGains.getkMaxOutput());
 
-        leftPIDFController.setP(leftGains.getkP());
-        leftPIDFController.setI(leftGains.getkI());
-        leftPIDFController.setD(leftGains.getkD());
-        leftPIDFController.setFF(leftGains.getkFF());
-        leftPIDFController.setIZone(leftGains.getkIz());
-        leftPIDFController.setOutputRange(leftGains.getkMinOutput(), leftGains.getkMaxOutput());
+        if(velocity) setDefaultCommand(new VelocityTankDrive(this));
+        else setDefaultCommand(new TankDrive(this));
 
-        rightPIDFController.setP(rightGains.getkP());
-        rightPIDFController.setI(rightGains.getkI());
-        rightPIDFController.setD(rightGains.getkD());
-        rightPIDFController.setFF(rightGains.getkFF());
-        rightPIDFController.setIZone(rightGains.getkIz());
-        rightPIDFController.setOutputRange(rightGains.getkMinOutput(), leftGains.getkMaxOutput());
+        //DataLogger.addDataElement("leftVelocity", () -> left1Encoder.getVelocity());
+        //DataLogger.addDataElement("rightVelocity", () -> right1Encoder.getVelocity());
+    }
 
-        setDefaultCommand(new VelocityTankDrive(this));
-
-        DataLogger.addDataElement("leftVelocity", () -> left1Encoder.getVelocity());
-        DataLogger.addDataElement("rightVelocity", () -> right1Encoder.getVelocity());
+    public void init() {
+        this.resetDistance();
     }
 
     @Override
@@ -107,16 +116,14 @@ public class Drivetrain extends SendableSubsystemBase {
     private void withEachMotor(Consumer<CANSparkMax> op) {
         op.accept(left1);
         op.accept(left2);
-        //op.accept(left3);
+        op.accept(left3);
         op.accept(right1);
         op.accept(right2);
-        //op.accept(right3);
+        op.accept(right3);
     }
 
     public void setPower(double left, double right) {
-        left *= 0.5;
-        right *= 0.5;
-        drive.tankDrive(left, right, false);
+        drive.tankDrive(left, right, true);
     }
 
     public void arcadeDrive(double speed, double rotation) {
@@ -135,13 +142,14 @@ public class Drivetrain extends SendableSubsystemBase {
         drive.tankDrive(left, right, true);
     }
 
-    public void setVelocity(double left, double right) {
-        // TODO implement
+    public void setVelocity(double left, double right) {   
+        this.rightPIDFController.setReference(left, ControlType.kVelocity);
+        this.leftPIDFController.setReference(right, ControlType.kVelocity);
     }
 
     public void resetDistance() {
-        left1Encoder.setPosition(0);
-        right1Encoder.setPosition(0);
+        left1Encoder.setPosition(0.0);
+        right1Encoder.setPosition(0.0);
     }
 
     public double getLeftDistance() {
@@ -159,5 +167,5 @@ public class Drivetrain extends SendableSubsystemBase {
     public double getRightVelocity() {
         return right1Encoder.getVelocity();
     }
-}
 
+}

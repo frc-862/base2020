@@ -11,11 +11,11 @@ public class ArcadeDrive extends SendableCommandBase {
     double right;
     double power;
     double turn;
-    double kT=.001;
+    double kT = .001;
     double angle;
-//    boolean first=true;
-    public ArcadeDrive(Drivetrain drivetrain) {
+    //boolean first=true;
 
+    public ArcadeDrive(Drivetrain drivetrain) {
         addRequirements(drivetrain);
         this.drivetrain = drivetrain;
     }

@@ -8,7 +8,7 @@
 package frc.robot.misc;
 
 /**
- * Add your docs here.
+ * Used to set the PID gains on various hardware components.
  */
 public class _Gains {
     private double kP, 

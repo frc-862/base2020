@@ -12,6 +12,7 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 
@@ -27,11 +28,10 @@ public class VelocityTankDrive extends SendableCommandBase {
   @Override
   public void execute() {
 
-    double leftSetPoint = Robot.oi.getLeftThrottle() * this.drivetrain.leftGains.getMaxRPM();
-    double rightSetPoint = Robot.oi.getRightThrottle() * this.drivetrain.rightGains.getMaxRPM();
+    double leftSetPoint = Robot.oi.getLeftThrottle() * Constants.leftGains.getMaxRPM();
+    double rightSetPoint = Robot.oi.getRightThrottle() * Constants.rightGains.getMaxRPM();
 
-    drivetrain.rightPIDFController.setReference(leftSetPoint, ControlType.kVelocity);
-    drivetrain.leftPIDFController.setReference(rightSetPoint, ControlType.kVelocity);
+    drivetrain.setVelocity(leftSetPoint, rightSetPoint);
 
     SmartDashboard.putNumber("leftSetPoint", leftSetPoint);
     SmartDashboard.putNumber("leftEncoderVelocity", drivetrain.left1Encoder.getVelocity());

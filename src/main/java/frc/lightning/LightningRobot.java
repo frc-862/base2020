@@ -108,7 +108,7 @@ public class LightningRobot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         double time = Timer.getFPGATimestamp();
-        if (time > Constants.settleTime) {
+        if (time > Constants.SETTLE_TIME) {
             counter += 1;
             if (counter % medPriorityFreq == 0) {
                 robotMediumPriorityPeriodic();
