@@ -7,27 +7,36 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * This class is the glue that binds the controls on the physical operator
- * interface to the commands and command groups that allow control of the robot.
- */
 public class OI {
-    XboxController driver = new XboxController(0);
+    
+    Joystick leftJoy = new Joystick(JoystickConstants.DRIVER_LEFT_JOY);
+    Joystick rightJoy = new Joystick(JoystickConstants.DRIVER_RIGHT_JOY);
+    XboxController driver = new XboxController(JoystickConstants.COPILOT);
 
     public double getThrottle() {
-        final double stick = driver.getRawAxis(1);
+        final double stick = driver.getRawAxis(JoystickConstants.THRUSTMASTER_Y_AXIS);
         return stick * stick * Math.signum(-stick);
     }
 
     public double getTurn() {
-        final double stick = driver.getRawAxis(4);
+        final double stick = driver.getRawAxis(4); // TODO - constant
         return stick * stick * Math.signum(-stick);
     }
 
     public boolean getQuickTurn() {
-        return driver.getRawButton(1);
+        return driver.getRawButton(1); // TODO - constant
     }
+
+    public double getRightThrottle() {
+        return -rightJoy.getRawAxis(JoystickConstants.THRUSTMASTER_Y_AXIS);
+    }
+
+    public double getLeftThrottle() {
+        return -leftJoy.getRawAxis(JoystickConstants.THRUSTMASTER_Y_AXIS);
+    }
+
 }

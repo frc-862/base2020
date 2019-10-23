@@ -246,10 +246,10 @@ public abstract class CANDrivetrain extends LightningDrivetrain {
     }
 
     public boolean isStalled() {
-        return leftMaster.getOutputCurrent() > Constants.movingCurrent &&
-               leftMaster.getSelectedSensorVelocity() < Constants.movingVelocity &&
-               rightMaster.getOutputCurrent() > Constants.movingCurrent &&
-               rightMaster.getSelectedSensorVelocity() < Constants.movingVelocity;
+        return leftMaster.getOutputCurrent() > Constants.MOVING_CURRENT &&
+               leftMaster.getSelectedSensorVelocity() < Constants.MOVING_VELOCITY &&
+               rightMaster.getOutputCurrent() > Constants.MOVING_CURRENT &&
+               rightMaster.getSelectedSensorVelocity() < Constants.MOVING_VELOCITY;
     }
 
     @Override

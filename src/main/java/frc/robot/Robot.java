@@ -17,28 +17,23 @@ import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.experimental.command.Command;
 import edu.wpi.first.wpilibj.experimental.command.CommandScheduler;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends LightningRobot {
+
     public static Drivetrain drivetrain;
     public static Core core;
     public static OI oi;
 
     public Robot() {
         super();
-        drivetrain = new Drivetrain();
+        drivetrain = new Drivetrain(false);
         core = new Core();
-
         oi = new OI();
     }
-    public void robotInit() {
-        Robot.core.resetNavx();
 
+    public void robotInit() {
+        super.robotInit();
+        core.init();
+        drivetrain.init();
     }
 }
 

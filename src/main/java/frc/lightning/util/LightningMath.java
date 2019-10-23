@@ -4,23 +4,23 @@ import frc.robot.Constants;
 import frc.robot.RobotConstants;
 
 public class LightningMath {
-    public static double wheelCircumference =  RobotConstants.wheelDiameter * Math.PI;
+    public static double wheelCircumference =  RobotConstants.WHEEL_DIAMETER * Math.PI;
 
     public static double talon2ips(double talon) {
         // multiply 100ms by 10 to get seconds
         return ticks2inches(talon * 10);
     }
 
-    public static double talon2fps(double talon) {///////////////////
+    public static double talon2fps(double talon) {
         // ticks /  100ms = talon
         double ticksps = talon * 10;  // ticks / sec
         return ticks2feet(ticksps);
     }
 
-    public static double fps2talon(double fps) {//////////////////
+    public static double fps2talon(double fps) {
         //double ips = fps * 12;
         double ticksps = fps / wheelCircumference * Constants.TICS_PER_ROTATION;
-        return ticksps / 10;                //ips2talon(fps*12);//fps*12 = ips
+        return ticksps / 10; // ips2talon(fps*12);//fps*12 = ips
     }
 
     public static double ips2talon(double ips) {
