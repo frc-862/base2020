@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.Quasar;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
@@ -25,4 +25,5 @@ public class TankDrive extends SendableCommandBase {
   public void execute() {
     drivetrain.tankDrive(Robot.oi.getLeftThrottle(), Robot.oi.getRightThrottle());
   }
+  
 }

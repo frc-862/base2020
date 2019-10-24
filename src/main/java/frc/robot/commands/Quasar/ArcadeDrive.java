@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Quasar;
 
 import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

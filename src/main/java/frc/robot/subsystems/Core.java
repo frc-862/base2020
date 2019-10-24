@@ -13,25 +13,41 @@ import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 
 public class Core extends SendableSubsystemBase {
+
+    private final String name = "CORE";
     
     Compressor compressor;
+
     AHRS navx;
 
     public Core() {
 
+        setName(name);
+
         compressor = new Compressor(RobotMap.COMPRESSOR_ID);
+
         navx = new AHRS(SPI.Port.kMXP);
 
-        //DataLogger.addDataElement("Heading", () -> getYaw());
-        //SmartDashboard.getNumber("get Yaw", getYaw());
-        //SmartDashboard.getNumber("get Roll", getRoll());
-        //SmartDashboard.getNumber("get pitch", getPitch());
-        //SmartDashboard.getNumber("get Angle", getAngle());
+        if(Constants.CORE_LOGGING_ENABLED){
+            DataLogger.addDataElement("Yaw", () -> getYaw());
+            DataLogger.addDataElement("Pitch", () -> getPitch());
+            DataLogger.addDataElement("Roll", () -> getRoll());
+            DataLogger.addDataElement("Angle", () -> getAngle());
+        }
+
+        if(Constants.CORE_DASHBOARD_ENABLED){
+            SmartDashboard.putNumber("Yaw", getYaw());
+            SmartDashboard.putNumber("Roll", getRoll());
+            SmartDashboard.putNumber("Pitch", getPitch());
+            SmartDashboard.putNumber("Angle", getAngle());
+        }
+        
     }
 
     public void init() {
@@ -39,10 +55,12 @@ public class Core extends SendableSubsystemBase {
     }
 
     public void periodic() {
-        SmartDashboard.getNumber("get Yaw", getYaw());
-        SmartDashboard.getNumber("get Roll", getRoll());
-        SmartDashboard.getNumber("get pitch", getPitch());
-        SmartDashboard.getNumber("get Angle", getAngle());
+        if(Constants.CORE_DASHBOARD_ENABLED){
+            SmartDashboard.putNumber("Yaw", getYaw());
+            SmartDashboard.putNumber("Roll", getRoll());
+            SmartDashboard.putNumber("Pitch", getPitch());
+            SmartDashboard.putNumber("Angle", getAngle());
+        }
     }
 
     public void resetNavx() { navx.reset(); }
@@ -53,6 +71,6 @@ public class Core extends SendableSubsystemBase {
     public double getAngleAdj() { return navx.getAngleAdjustment(); }
     //public double getContinuousHeading() { return navx.getAngle(); }
 
-    }
+}
 
 

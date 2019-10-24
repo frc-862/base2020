@@ -13,28 +13,35 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.LightningRobot;
 import frc.robot.subsystems.Core;
 import frc.robot.subsystems.Drivetrain;
-
+import frc.robot.subsystems.Hyperion;
+import frc.robot.subsystems.Drivetrain.DriveStyle;
 import edu.wpi.first.wpilibj.experimental.command.Command;
 import edu.wpi.first.wpilibj.experimental.command.CommandScheduler;
 
 public class Robot extends LightningRobot {
 
     public static Drivetrain drivetrain;
+    public static Hyperion hyperion;
     public static Core core;
+
     public static OI oi;
 
     public Robot() {
         super();
-        drivetrain = new Drivetrain(false);
+        drivetrain = new Drivetrain(DriveStyle.TANK_DRIVE);
+        // drivetrain = new Drivetrain(DriveStyle.VELOCITY_TANK_DRIVE);
+        //hyperion = new Hyperion();
         core = new Core();
         oi = new OI();
     }
 
     public void robotInit() {
         super.robotInit();
-        core.init();
         drivetrain.init();
+        //hyperion.init();
+        core.init();
     }
+
 }
 
 

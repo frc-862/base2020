@@ -12,52 +12,81 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
-import frc.robot.commands.ArcadeDrive;
-import frc.robot.commands.TankDrive;
-import frc.robot.commands.VelocityTankDrive;
+import frc.robot.commands.Quasar.ArcadeDrive;
+import frc.robot.commands.Quasar.TankDrive;
+import frc.robot.commands.Quasar.VelocityTankDrive;
 import frc.robot.misc.Gains;
-import frc.robot.misc._Gains;
+import frc.robot.misc.REVGains;
 
 import javax.xml.crypto.Data;
 import java.util.function.Consumer;
 
 public class Drivetrain extends SendableSubsystemBase {
 
-    CANSparkMax left1;
-    CANSparkMax left2;
-    CANSparkMax left3;
+    private final String name = "DRIVETRAIN";
     
-    public CANEncoder left1Encoder;
+    public static enum DriveStyle {
 
-    public CANPIDController leftPIDFController;
+        ARCADE_DRIVE("Arcade Drive"),
+        TANK_DRIVE("Open Loop - Tank Drive"),
+        VELOCITY_TANK_DRIVE("Closed Loop - Tank Drive");
 
-    CANSparkMax right1;
-    CANSparkMax right2;
-    CANSparkMax right3;
+        private String displayId = "";
 
-    public CANEncoder right1Encoder;
+        DriveStyle(String displayId) {
+            this.displayId = displayId;
+        }
 
-    public CANPIDController rightPIDFController;
+        public String getDisplayId() {
+            return this.displayId;
+        }
 
-    SpeedControllerGroup leftGroup;
-    SpeedControllerGroup rightGroup;
+    }
 
-    DifferentialDrive drive;
+    private CANSparkMax left1;
+    private CANSparkMax left2;
+    private CANSparkMax left3;
+    
+    private CANEncoder leftEncoder;
 
-    public Drivetrain(boolean velocity) {
+    private CANPIDController leftPIDFController;
+
+    private CANSparkMax right1;
+    private CANSparkMax right2;
+    private CANSparkMax right3;
+
+    private CANEncoder rightEncoder;
+
+    private CANPIDController rightPIDFController;
+
+    private SpeedControllerGroup leftGroup;
+    private SpeedControllerGroup rightGroup;
+
+    private DifferentialDrive drive;
+
+    DriveStyle driveStyle;
+
+    public Drivetrain(Drivetrain.DriveStyle driveStyle) {
+
+        this.driveStyle = driveStyle;
+
+        setName(name);
 
         left1 = new CANSparkMax(RobotMap.LEFT_1_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
         left2 = new CANSparkMax(RobotMap.LEFT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
         left3 = new CANSparkMax(RobotMap.LEFT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
         
-        left1Encoder = new CANEncoder(left1);
+        leftEncoder = new CANEncoder(left1);
 
         leftPIDFController = left1.getPIDController();
 
@@ -65,7 +94,7 @@ public class Drivetrain extends SendableSubsystemBase {
         right2 = new CANSparkMax(RobotMap.RIGHT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
         right3 = new CANSparkMax(RobotMap.RIGHT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-        right1Encoder = new CANEncoder(right1);
+        rightEncoder = new CANEncoder(right1);
 
         rightPIDFController = right1.getPIDController();
 
@@ -77,11 +106,14 @@ public class Drivetrain extends SendableSubsystemBase {
         right3.setInverted(false);
 
         withEachMotor((m) -> m.setOpenLoopRampRate(Constants.OPEN_LOOP_RAMP_RATE));
+        withEachMotor((m) -> m.setIdleMode(IdleMode.kBrake));
 
         leftGroup = new SpeedControllerGroup(left1, left2, left3);
         rightGroup = new SpeedControllerGroup(right1, right2, right3);
 
         drive = new DifferentialDrive(leftGroup, rightGroup);
+
+        drive.setSafetyEnabled(false);
 
         leftPIDFController.setP(Constants.leftGains.getkP());
         leftPIDFController.setI(Constants.leftGains.getkI());
@@ -97,11 +129,33 @@ public class Drivetrain extends SendableSubsystemBase {
         rightPIDFController.setIZone(Constants.rightGains.getkIz());
         rightPIDFController.setOutputRange(Constants.rightGains.getkMinOutput(), Constants.leftGains.getkMaxOutput());
 
-        if(velocity) setDefaultCommand(new VelocityTankDrive(this));
-        else setDefaultCommand(new TankDrive(this));
+        switch(driveStyle) {
+            case ARCADE_DRIVE:
+                setDefaultCommand(new ArcadeDrive(this));
+                break;
+            case VELOCITY_TANK_DRIVE:
+                setDefaultCommand(new VelocityTankDrive(this));
+                break;
+            default:
+                setDefaultCommand(new TankDrive(this));
+                break;
+        }
+  
+        REVGains.putGainsToBeTunedOnDash((name + "_RIGHT"), Constants.rightGains);
+        REVGains.putGainsToBeTunedOnDash((name + "_LEFT"), Constants.leftGains);
+        
+        if(Constants.DRIVETRAIN_DASHBOARD_ENABLED) {
+            SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
+            SmartDashboard.putNumber("Left Distance", getLeftDistance());
+            SmartDashboard.putNumber("Right Velocity", getRightVelocity());            
+            SmartDashboard.putNumber("Right Distance", getRightDistance());
+        }
 
-        //DataLogger.addDataElement("leftVelocity", () -> left1Encoder.getVelocity());
-        //DataLogger.addDataElement("rightVelocity", () -> right1Encoder.getVelocity());
+        if(Constants.DRIVETRAIN_LOGGING_ENABLED){
+            DataLogger.addDataElement("leftVelocity", () -> leftEncoder.getVelocity());
+            DataLogger.addDataElement("rightVelocity", () -> rightEncoder.getVelocity());
+        }
+
     }
 
     public void init() {
@@ -110,7 +164,14 @@ public class Drivetrain extends SendableSubsystemBase {
 
     @Override
     public void periodic() {
-
+        REVGains.updateGainsFromDash((name + "_RIGHT"), Constants.rightGains, rightPIDFController);
+        REVGains.updateGainsFromDash((name + "_LEFT"), Constants.leftGains, leftPIDFController);
+        if(Constants.DRIVETRAIN_DASHBOARD_ENABLED) {
+            SmartDashboard.putNumber("Left Velocity", getLeftVelocity());
+            SmartDashboard.putNumber("Left Distance", getLeftDistance());
+            SmartDashboard.putNumber("Right Velocity", getRightVelocity());            
+            SmartDashboard.putNumber("Right Distance", getRightDistance());
+        }
     }
 
     private void withEachMotor(Consumer<CANSparkMax> op) {
@@ -143,29 +204,29 @@ public class Drivetrain extends SendableSubsystemBase {
     }
 
     public void setVelocity(double left, double right) {   
-        this.rightPIDFController.setReference(left, ControlType.kVelocity);
-        this.leftPIDFController.setReference(right, ControlType.kVelocity);
+        this.rightPIDFController.setReference(right, ControlType.kSmartVelocity);
+        this.leftPIDFController.setReference(left, ControlType.kSmartVelocity);
     }
 
     public void resetDistance() {
-        left1Encoder.setPosition(0.0);
-        right1Encoder.setPosition(0.0);
+        leftEncoder.setPosition(0.0);
+        rightEncoder.setPosition(0.0);
     }
 
     public double getLeftDistance() {
-        return left1Encoder.getPosition();
+        return leftEncoder.getPosition();
     }
 
     public double getRightDistance() {
-        return right1Encoder.getPosition();
+        return rightEncoder.getPosition();
     }
 
     public double getLeftVelocity() {
-        return left1Encoder.getVelocity();
+        return leftEncoder.getVelocity();
     }
 
     public double getRightVelocity() {
-        return right1Encoder.getVelocity();
+        return rightEncoder.getVelocity();
     }
 
 }

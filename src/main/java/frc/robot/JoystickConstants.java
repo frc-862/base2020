@@ -10,9 +10,6 @@ public class JoystickConstants {
     // JOYSTICK AXIS
     public static final int THRUSTMASTER_X_AXIS = 0;
     public static final int THRUSTMASTER_Y_AXIS = 1;
-    public static final int THRUSTMASTER_ROTATIONAL_AXIS = 2; // TODO - Is this right???
-    public static final int THRUSTMASTER_SLIDER_AXIS = 3; // TODO - Is this right???
-    //TODO - make for rest of x box sticks
 
     // JOYSTICK BUTTONS
 
