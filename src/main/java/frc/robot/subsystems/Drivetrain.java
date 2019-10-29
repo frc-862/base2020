@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
@@ -94,19 +95,18 @@ public class Drivetrain extends SendableSubsystemBase {
         right2 = new CANSparkMax(RobotMap.RIGHT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
         right3 = new CANSparkMax(RobotMap.RIGHT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
+        LiveWindow.add(this);
+
         rightEncoder = new CANEncoder(right1);
 
         rightPIDFController = right1.getPIDController();
 
-        left1.setInverted(false);
-        left2.setInverted(true);
-        left3.setInverted(false);
-        right1.setInverted(false);
-        right2.setInverted(true);
-        right3.setInverted(false);
+        initMotorDirections();
 
         withEachMotor((m) -> m.setOpenLoopRampRate(Constants.OPEN_LOOP_RAMP_RATE));
-        withEachMotor((m) -> m.setIdleMode(IdleMode.kBrake));
+        withEachMotor((m) -> m.setClosedLoopRampRate(Constants.CLOSE_LOOP_RAMP_RATE));
+        //withEachMotor((m) -> m.setIdleMode(IdleMode.kBrake));
+        withEachMotor((m) -> m.setIdleMode(IdleMode.kCoast));
 
         leftGroup = new SpeedControllerGroup(left1, left2, left3);
         rightGroup = new SpeedControllerGroup(right1, right2, right3);
@@ -183,6 +183,15 @@ public class Drivetrain extends SendableSubsystemBase {
         op.accept(right3);
     }
 
+    private void initMotorDirections() {
+        left1.setInverted(false);
+        left2.setInverted(true);
+        left3.setInverted(false);
+        right1.setInverted(false);
+        right2.setInverted(true);
+        right3.setInverted(false);
+    }
+
     public void setPower(double left, double right) {
         drive.tankDrive(left, right, true);
     }
@@ -204,8 +213,8 @@ public class Drivetrain extends SendableSubsystemBase {
     }
 
     public void setVelocity(double left, double right) {   
-        this.rightPIDFController.setReference(right, ControlType.kSmartVelocity);
-        this.leftPIDFController.setReference(left, ControlType.kSmartVelocity);
+        this.rightPIDFController.setReference(right, ControlType.kVelocity);
+        this.leftPIDFController.setReference(left, ControlType.kVelocity);
     }
 
     public void resetDistance() {

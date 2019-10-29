@@ -23,11 +23,12 @@ public class Constants extends ConstantBase {
 
     // DRIVETRAIN
     public static final double OPEN_LOOP_RAMP_RATE = 0.5;
+    public static final double CLOSE_LOOP_RAMP_RATE = 0.5;
     public static final double SETTLE_TIME = 5.0;
     public static final double MOVING_CURRENT = 40;
     public static final double MOVING_VELOCITY = 40;
-    public static REVGains leftGains = new REVGains(2.0, 0.0,  0.14, 0.99, 500.0, 1.0, -1.0, NEO_MAX_RPM); // P, I, D, FF, Iz, MaxOutput, MinOutput, MaxRPM
-    public static REVGains rightGains = new REVGains(2.0, 0.0,  0.14, 0.99, 500.0, 1.0, -1.0, NEO_MAX_RPM); // P, I, D, FF, Iz, MaxOutput, MinOutput, MaxRPM
+    public static REVGains leftGains = new REVGains(4e-3, 1e-6,  0.0, 0.0, 0.0, 1.0, -1.0, NEO_MAX_RPM); // P, I, D, FF, Iz, MaxOutput, MinOutput, MaxRPM
+    public static REVGains rightGains = new REVGains(4e-3, 1e-6,  0.0, 0.0, 0.0, 1.0, -1.0, NEO_MAX_RPM); // P, I, D, FF, Iz, MaxOutput, MinOutput, MaxRPM
 
     // HYPERION
     public static REVGains hyperionGains = new REVGains(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, NEO_MAX_RPM); // P, I, D, FF, Iz, MaxOutput, MinOutput, MaxRPM
