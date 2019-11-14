@@ -30,16 +30,17 @@ public class Robot extends LightningRobot {
         super();
         drivetrain = new Drivetrain(DriveStyle.TANK_DRIVE);
         // drivetrain = new Drivetrain(DriveStyle.VELOCITY_TANK_DRIVE);
-        //hyperion = new Hyperion();
-        core = new Core();
+        // drivetrain = new Drivetrain(DriveStyle.TEST_WEIRDNESS);
+        hyperion = new Hyperion();
+        //core = new Core();
         oi = new OI();
     }
 
     public void robotInit() {
         super.robotInit();
         drivetrain.init();
-        //hyperion.init();
-        core.init();
+        hyperion.init();
+        //core.init();
     }
 
 }

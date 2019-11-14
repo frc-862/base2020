@@ -15,7 +15,7 @@ public class OI {
     Joystick drive = new Joystick(0);
     Joystick leftJoy = new Joystick(1/*JoystickConstants.DRIVER_LEFT_JOY*/);
     Joystick rightJoy = new Joystick(JoystickConstants.DRIVER_RIGHT_JOY);
-    XBoxController copilot = new XBoxController(JoystickConstants.COPILOT);
+    public XBoxController copilot = new XBoxController(JoystickConstants.COPILOT);
 
     public double getThrottle() {
         final double stick = copilot.getLeftStickY();
@@ -42,7 +42,9 @@ public class OI {
     }
 
     public double getTurretPwr() {
-        return Math.pow(-copilot.getRightStickX(), 3);
+        // return Math.pow(-copilot.getRightStickX(), 3);
+        // return Math.pow(-drive.getRawAxis(4), 3);
+        return (copilot.getRawAxis(3) - copilot.getRawAxis(2));
     }
 
 }

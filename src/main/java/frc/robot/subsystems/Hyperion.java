@@ -12,6 +12,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
@@ -20,6 +21,7 @@ import frc.lightning.logging.DataLogger;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.commands.Hyperion.ManualDrive;
+import frc.robot.commands.Hyperion.TurretToRobotSetpoint;
 import frc.robot.misc.REVGains;
 
 public class Hyperion extends SendableSubsystemBase {
@@ -27,6 +29,8 @@ public class Hyperion extends SendableSubsystemBase {
     private final String name = "HYPERION";
 
     private CANSparkMax driver;
+
+    double kp = 0.01;
 
     private CANEncoder encoder;
 
@@ -37,6 +41,8 @@ public class Hyperion extends SendableSubsystemBase {
         setName(name);
 
         driver = new CANSparkMax(RobotMap.HYPERION_DRIVER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+        driver.setIdleMode(IdleMode.kBrake);
 
         encoder = new CANEncoder(driver);
 
@@ -61,7 +67,8 @@ public class Hyperion extends SendableSubsystemBase {
             SmartDashboard.putNumber("Turret Position", getTurretPosition());
         }
 
-        setDefaultCommand(new ManualDrive(this));
+        // setDefaultCommand(new ManualDrive(this));
+        setDefaultCommand(new TurretToRobotSetpoint(this));
         
     }
 
@@ -94,12 +101,21 @@ public class Hyperion extends SendableSubsystemBase {
         PIDFController.setReference(position, ControlType.kPosition);
     }
 
+    public void stop() {
+        driver.set(0.0);
+    }
+
     public double getTurretPosition() {
-        return encoder.getPosition();
+        return encoder.getPosition() *(360/76.55);
     }
 
     public double getTurretVelocity() {
         return encoder.getVelocity();
+    }
+    public void goToPosition(int degree){
+        double error = degree - getTurretPosition();
+        double power = error * kp;
+        setPower(power);
     }
 
 }

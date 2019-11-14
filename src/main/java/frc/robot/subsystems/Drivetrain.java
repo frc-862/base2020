@@ -24,6 +24,7 @@ import frc.lightning.logging.DataLogger;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.commands.Quasar.ArcadeDrive;
+import frc.robot.commands.Quasar.OtherTankDrive;
 import frc.robot.commands.Quasar.TankDrive;
 import frc.robot.commands.Quasar.VelocityTankDrive;
 import frc.robot.misc.Gains;
@@ -40,7 +41,8 @@ public class Drivetrain extends SendableSubsystemBase {
 
         ARCADE_DRIVE("Arcade Drive"),
         TANK_DRIVE("Open Loop - Tank Drive"),
-        VELOCITY_TANK_DRIVE("Closed Loop - Tank Drive");
+        VELOCITY_TANK_DRIVE("Closed Loop - Tank Drive"),
+        TEST_WEIRDNESS("OOPS");
 
         private String displayId = "";
 
@@ -101,12 +103,18 @@ public class Drivetrain extends SendableSubsystemBase {
 
         rightPIDFController = right1.getPIDController();
 
-        initMotorDirections();
+        // initMotorDirections();
+
+        right2.follow(right1, true);
+        right3.follow(right1, false); 
+           
+        left2.follow(left1, true);
+        left3.follow(left1, false);
 
         withEachMotor((m) -> m.setOpenLoopRampRate(Constants.OPEN_LOOP_RAMP_RATE));
         withEachMotor((m) -> m.setClosedLoopRampRate(Constants.CLOSE_LOOP_RAMP_RATE));
-        //withEachMotor((m) -> m.setIdleMode(IdleMode.kBrake));
-        withEachMotor((m) -> m.setIdleMode(IdleMode.kCoast));
+        withEachMotor((m) -> m.setIdleMode(IdleMode.kBrake));
+        //withEachMotor((m) -> m.setIdleMode(IdleMode.kCoast));
 
         leftGroup = new SpeedControllerGroup(left1, left2, left3);
         rightGroup = new SpeedControllerGroup(right1, right2, right3);
@@ -135,6 +143,9 @@ public class Drivetrain extends SendableSubsystemBase {
                 break;
             case VELOCITY_TANK_DRIVE:
                 setDefaultCommand(new VelocityTankDrive(this));
+                break;
+            case TEST_WEIRDNESS:
+                setDefaultCommand(new OtherTankDrive(this));
                 break;
             default:
                 setDefaultCommand(new TankDrive(this));
@@ -210,6 +221,11 @@ public class Drivetrain extends SendableSubsystemBase {
 
     public void tankDrive(double left, double right){
         drive.tankDrive(left, right, true);
+    }
+
+    public void otherTankDrive (double left, double right) {
+        right1.set(-right);
+        left1.set(left);
     }
 
     public void setVelocity(double left, double right) {   

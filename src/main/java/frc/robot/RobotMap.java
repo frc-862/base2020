@@ -21,6 +21,6 @@ public class RobotMap {
     public static final int COMPRESSOR_ID = 11;
 
     // HYPERION
-    public static final int HYPERION_DRIVER_CAN_ID = 7; // TODO - put number here
+    public static final int HYPERION_DRIVER_CAN_ID = 7;
 
 }
