@@ -32,7 +32,7 @@ public class Robot extends LightningRobot {
         // drivetrain = new Drivetrain(DriveStyle.VELOCITY_TANK_DRIVE);
         // drivetrain = new Drivetrain(DriveStyle.TEST_WEIRDNESS);
         hyperion = new Hyperion();
-        //core = new Core();
+        core = new Core();
         oi = new OI();
     }
 
@@ -40,7 +40,7 @@ public class Robot extends LightningRobot {
         super.robotInit();
         drivetrain.init();
         hyperion.init();
-        //core.init();
+        core.init();
     }
 
 }

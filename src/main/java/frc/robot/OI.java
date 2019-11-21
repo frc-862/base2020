@@ -8,14 +8,23 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.experimental.buttons.JoystickButton;
 import frc.lightning.util.XBoxController;
+import frc.robot.commands.Quasar.ToggleShifter;
 
 public class OI {
     
     Joystick drive = new Joystick(0);
-    Joystick leftJoy = new Joystick(1/*JoystickConstants.DRIVER_LEFT_JOY*/);
-    Joystick rightJoy = new Joystick(JoystickConstants.DRIVER_RIGHT_JOY);
+    Joystick leftJoy; // = new Joystick(1/*JoystickConstants.DRIVER_LEFT_JOY*/);
+    Joystick rightJoy; // = new Joystick(JoystickConstants.DRIVER_RIGHT_JOY);
     public XBoxController copilot = new XBoxController(JoystickConstants.COPILOT);
+
+    JoystickButton shiftButton;
+
+    public OI() {
+        shiftButton = new JoystickButton(drive, 6);
+        shiftButton.whenPressed(new ToggleShifter(Robot.drivetrain));
+    }
 
     public double getThrottle() {
         final double stick = copilot.getLeftStickY();

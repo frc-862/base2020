@@ -16,11 +16,15 @@ public class RobotMap {
     public static final int RIGHT_1_CAN_ID = 4;
     public static final int RIGHT_2_CAN_ID = 5;
     public static final int RIGHT_3_CAN_ID = 6;
+    public static final int SHIFTER_FWD_CHANNEL     = 0;
+    public static final int SHIFTER_REVERSE_CHANNEL = 7;
 
     // CORE
+    public static final int SHIFTER_MODULE_NUM = 11;
     public static final int COMPRESSOR_ID = 11;
 
     // HYPERION
     public static final int HYPERION_DRIVER_CAN_ID = 7;
+    public static final int PIGEON_ID = 0; // TODO - Fix
 
 }

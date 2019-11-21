@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -14,13 +15,13 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.commands.Hyperion.ManualDrive;
+import frc.robot.commands.Hyperion.TurretToFieldPosition;
 import frc.robot.commands.Hyperion.TurretToRobotSetpoint;
 import frc.robot.misc.REVGains;
 
@@ -30,9 +31,11 @@ public class Hyperion extends SendableSubsystemBase {
 
     private CANSparkMax driver;
 
-    double kp = 0.01;
+    double kP = 0.01;
 
     private CANEncoder encoder;
+
+    private PigeonIMU pigeon;
 
     private CANPIDController PIDFController;
 
@@ -45,6 +48,8 @@ public class Hyperion extends SendableSubsystemBase {
         driver.setIdleMode(IdleMode.kBrake);
 
         encoder = new CANEncoder(driver);
+
+        // pigeon = new PigeonIMU(RobotMap.PIGEON_ID); // until it gets plugged in // check firmware
 
         PIDFController = driver.getPIDController();
 
@@ -69,6 +74,7 @@ public class Hyperion extends SendableSubsystemBase {
 
         // setDefaultCommand(new ManualDrive(this));
         setDefaultCommand(new TurretToRobotSetpoint(this));
+        // setDefaultCommand(new TurretToFieldPosition(this));
         
     }
 
@@ -106,15 +112,26 @@ public class Hyperion extends SendableSubsystemBase {
     }
 
     public double getTurretPosition() {
-        return encoder.getPosition() *(360/76.55);
+        return encoder.getPosition() * (360 / 76.55);
+    }
+
+    public double getTurretHeading() {
+        return pigeon.getAbsoluteCompassHeading(); // this functions returns value ranging [0,360)
     }
 
     public double getTurretVelocity() {
         return encoder.getVelocity();
     }
-    public void goToPosition(int degree){
+
+    public void goToPosition(int degree) {
         double error = degree - getTurretPosition();
-        double power = error * kp;
+        double power = error * kP;
+        setPower(power);
+    }
+
+    public void goToHeading(double heading) {
+        double error = heading - getTurretHeading();
+        double power = error * kP;
         setPower(power);
     }
 

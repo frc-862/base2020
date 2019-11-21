@@ -14,7 +14,9 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -36,6 +38,10 @@ import java.util.function.Consumer;
 public class Drivetrain extends SendableSubsystemBase {
 
     private final String name = "DRIVETRAIN";
+    
+    public static final DoubleSolenoid.Value kHighGear = DoubleSolenoid.Value.kForward;
+
+    public static final DoubleSolenoid.Value kLowGear = DoubleSolenoid.Value.kReverse;
     
     public static enum DriveStyle {
 
@@ -72,6 +78,8 @@ public class Drivetrain extends SendableSubsystemBase {
 
     private CANPIDController rightPIDFController;
 
+    private DoubleSolenoid shifter;
+
     private SpeedControllerGroup leftGroup;
     private SpeedControllerGroup rightGroup;
 
@@ -103,6 +111,8 @@ public class Drivetrain extends SendableSubsystemBase {
 
         rightPIDFController = right1.getPIDController();
 
+        shifter = new DoubleSolenoid(RobotMap.SHIFTER_MODULE_NUM, RobotMap.SHIFTER_FWD_CHANNEL, RobotMap.SHIFTER_REVERSE_CHANNEL);
+
         // initMotorDirections();
 
         right2.follow(right1, true);
@@ -114,7 +124,7 @@ public class Drivetrain extends SendableSubsystemBase {
         withEachMotor((m) -> m.setOpenLoopRampRate(Constants.OPEN_LOOP_RAMP_RATE));
         withEachMotor((m) -> m.setClosedLoopRampRate(Constants.CLOSE_LOOP_RAMP_RATE));
         withEachMotor((m) -> m.setIdleMode(IdleMode.kBrake));
-        //withEachMotor((m) -> m.setIdleMode(IdleMode.kCoast));
+        // withEachMotor((m) -> m.setIdleMode(IdleMode.kCoast));
 
         leftGroup = new SpeedControllerGroup(left1, left2, left3);
         rightGroup = new SpeedControllerGroup(right1, right2, right3);
@@ -171,6 +181,7 @@ public class Drivetrain extends SendableSubsystemBase {
 
     public void init() {
         this.resetDistance();
+        this.lowGear();
     }
 
     @Override
@@ -201,6 +212,18 @@ public class Drivetrain extends SendableSubsystemBase {
         right1.setInverted(false);
         right2.setInverted(true);
         right3.setInverted(false);
+    }
+
+    public void highGear() {
+        shifter.set(kHighGear);
+    }
+
+    public void lowGear() {
+        shifter.set(kLowGear);
+    }
+
+    public DoubleSolenoid.Value getGear() {
+        return shifter.get();
     }
 
     public void setPower(double left, double right) {

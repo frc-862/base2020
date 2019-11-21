@@ -1444,15 +1444,26 @@
               "_source0": "network_table:///LiveWindow/Ungrouped/Scheduler",
               "_title": "LiveWindow/Ungrouped/Scheduler"
             }
+          },
+          "7,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Turret Position",
+              "_title": "/SmartDashboard/Turret Position"
+            }
           }
         }
       }
     }
   ],
   "windowGeometry": {
-    "x": 3.0,
-    "y": 243.0,
+    "x": -4.0,
+    "y": 221.0,
     "width": 1929.0,
-    "height": 823.0
+    "height": 819.0
   }
 }

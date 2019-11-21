@@ -7,31 +7,42 @@
 
 package frc.robot.commands.Quasar;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 
-public class VelocityTankDrive extends SendableCommandBase {
+/**
+ * Add your docs here.
+ */
+public class ToggleShifter extends SendableCommandBase{
 
     private Drivetrain drivetrain;
 
-    public VelocityTankDrive(Drivetrain drivetrain) {
+    public ToggleShifter(Drivetrain drivetrain) {
         addRequirements(drivetrain);
         this.drivetrain = drivetrain;
     }
 
+    int count = 0;
+
     @Override
     public void execute() {
 
-        double targetLeft = (Math.abs(Robot.oi.getLeftThrottle()) < 0.1) ? 0.0 : Robot.oi.getLeftThrottle() * Constants.leftGains.getMaxRPM();
-        double targetRight = (Math.abs(Robot.oi.getRightThrottle()) < 0.1) ? 0.0 : Robot.oi.getRightThrottle() * Constants.rightGains.getMaxRPM();
-        
-        SmartDashboard.putNumber("Left Target", targetLeft);
-        SmartDashboard.putNumber("Right Target", targetRight);
+        if(count == 0) {
 
-        drivetrain.setVelocity(targetLeft, targetRight);
+            DoubleSolenoid.Value currentGear = drivetrain.getGear();
+
+            if(currentGear.equals(Drivetrain.kHighGear)) drivetrain.lowGear();
+            else if (currentGear.equals(Drivetrain.kLowGear)) drivetrain.highGear();
+            else drivetrain.lowGear();
+
+            System.out.println("Changed.");
+
+        }
+
+        count++;
+
+        end(false);
         
     }
 
