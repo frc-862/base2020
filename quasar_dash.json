@@ -1007,6 +1007,21 @@
                   "Range/Center": 0.0,
                   "Visuals/Orientation": "HORIZONTAL",
                   "Visuals/Number of tick marks": 5
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,0]/Value",
+                  "_title": "DoubleSolenoid[0,0]/Value"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[0,1]/Value",
+                  "_title": "DoubleSolenoid[0,1]/Value"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/DoubleSolenoid[11,0]/Value",
+                  "_title": "DoubleSolenoid[11,0]/Value"
                 }
               ]
             }
@@ -1461,7 +1476,7 @@
     }
   ],
   "windowGeometry": {
-    "x": -4.0,
+    "x": -7.0,
     "y": 221.0,
     "width": 1929.0,
     "height": 819.0

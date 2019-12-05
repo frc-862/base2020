@@ -9,7 +9,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
+import edu.wpi.first.wpilibj.command.Command;
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
@@ -18,7 +19,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 
 
-public class Core extends SendableSubsystemBase {
+public class Core extends Command {
 
     private final String name = "CORE";
     
@@ -71,6 +72,10 @@ public class Core extends SendableSubsystemBase {
     public double getAngleAdj() { return navx.getAngleAdjustment(); }
     //public double getContinuousHeading() { return navx.getAngle(); }
 
+    @Override
+    protected boolean isFinished() {
+        return false;
+    }
 }
 
 

@@ -1,12 +1,11 @@
 package frc.robot.commands.Quasar;
 
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 
-public class ArcadeDrive extends SendableCommandBase {
-    private Drivetrain drivetrain;
+public class ArcadeDrive extends Command {
     double left;
     double right;
     double power;
@@ -15,9 +14,8 @@ public class ArcadeDrive extends SendableCommandBase {
     double angle;
     //boolean first=true;
 
-    public ArcadeDrive(Drivetrain drivetrain) {
-        addRequirements(drivetrain);
-        this.drivetrain = drivetrain;
+    public ArcadeDrive() {
+        requires(Robot.drivetrain);
     }
 
     @Override
@@ -36,7 +34,12 @@ public class ArcadeDrive extends SendableCommandBase {
 //            drivetrain.setPower(left,right);
 //        }else {
 //            first=true;
-            drivetrain.curvatureDrive(Robot.oi.getThrottle(), Robot.oi.getTurn(), Robot.oi.getQuickTurn());
+            Robot.drivetrain.curvatureDrive(Robot.oi.getThrottle(), Robot.oi.getTurn(), Robot.oi.getQuickTurn());
 //        }
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return false;
     }
 }

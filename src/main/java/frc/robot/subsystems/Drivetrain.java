@@ -17,8 +17,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,7 +35,7 @@ import frc.robot.misc.REVGains;
 import javax.xml.crypto.Data;
 import java.util.function.Consumer;
 
-public class Drivetrain extends SendableSubsystemBase {
+public class Drivetrain extends Subsystem {
 
     private final String name = "DRIVETRAIN";
     
@@ -146,21 +146,6 @@ public class Drivetrain extends SendableSubsystemBase {
         rightPIDFController.setFF(Constants.rightGains.getkFF());
         rightPIDFController.setIZone(Constants.rightGains.getkIz());
         rightPIDFController.setOutputRange(Constants.rightGains.getkMinOutput(), Constants.leftGains.getkMaxOutput());
-
-        switch(driveStyle) {
-            case ARCADE_DRIVE:
-                setDefaultCommand(new ArcadeDrive(this));
-                break;
-            case VELOCITY_TANK_DRIVE:
-                setDefaultCommand(new VelocityTankDrive(this));
-                break;
-            case TEST_WEIRDNESS:
-                setDefaultCommand(new OtherTankDrive(this));
-                break;
-            default:
-                setDefaultCommand(new TankDrive(this));
-                break;
-        }
   
         REVGains.putGainsToBeTunedOnDash((name + "_RIGHT"), Constants.rightGains);
         REVGains.putGainsToBeTunedOnDash((name + "_LEFT"), Constants.leftGains);
@@ -177,6 +162,24 @@ public class Drivetrain extends SendableSubsystemBase {
             DataLogger.addDataElement("rightVelocity", () -> rightEncoder.getVelocity());
         }
 
+    }
+
+    @Override
+    protected void initDefaultCommand() {
+        switch(driveStyle) {
+            case ARCADE_DRIVE:
+                setDefaultCommand(new ArcadeDrive());
+                break;
+            case VELOCITY_TANK_DRIVE:
+                setDefaultCommand(new VelocityTankDrive());
+                break;
+            case TEST_WEIRDNESS:
+                setDefaultCommand(new OtherTankDrive());
+                break;
+            default:
+                setDefaultCommand(new TankDrive());
+                break;
+        }
     }
 
     public void init() {

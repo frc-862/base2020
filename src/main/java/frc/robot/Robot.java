@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.LightningRobot;
@@ -15,8 +16,6 @@ import frc.robot.subsystems.Core;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hyperion;
 import frc.robot.subsystems.Drivetrain.DriveStyle;
-import edu.wpi.first.wpilibj.experimental.command.Command;
-import edu.wpi.first.wpilibj.experimental.command.CommandScheduler;
 
 public class Robot extends LightningRobot {
 

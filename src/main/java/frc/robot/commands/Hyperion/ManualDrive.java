@@ -7,23 +7,26 @@
 
 package frc.robot.commands.Hyperion;
 
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hyperion;
 
-public class ManualDrive extends SendableCommandBase {
+public class ManualDrive extends Command {
 
-    private Hyperion hyperion;
+    
 
-    public ManualDrive(Hyperion hyperion) {
-        addRequirements(hyperion);
-        this.hyperion = hyperion;
+    public ManualDrive() {
+        requires(Robot.hyperion);
     }
 
     @Override
     public void execute() {
-        hyperion.setPower(Robot.oi.getTurretPwr());
+        Robot.hyperion.setPower(Robot.oi.getTurretPwr());
     }
+@Override
+protected boolean isFinished() {
+    return false;
+}
 
 }

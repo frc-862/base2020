@@ -7,19 +7,15 @@
 
 package frc.robot.commands.Quasar;
 
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.subsystems.Drivetrain;
 
-public class VelocityTankDrive extends SendableCommandBase {
+public class VelocityTankDrive extends Command {
 
-    private Drivetrain drivetrain;
-
-    public VelocityTankDrive(Drivetrain drivetrain) {
-        addRequirements(drivetrain);
-        this.drivetrain = drivetrain;
+    public VelocityTankDrive() {
+        requires(Robot.drivetrain);
     }
 
     @Override
@@ -31,8 +27,13 @@ public class VelocityTankDrive extends SendableCommandBase {
         SmartDashboard.putNumber("Left Target", targetLeft);
         SmartDashboard.putNumber("Right Target", targetRight);
 
-        drivetrain.setVelocity(targetLeft, targetRight);
+        Robot.drivetrain.setVelocity(targetLeft, targetRight);
         
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return false;
     }
 
 }

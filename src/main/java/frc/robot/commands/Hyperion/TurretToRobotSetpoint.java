@@ -7,23 +7,20 @@
 
 package frc.robot.commands.Hyperion;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.Hyperion;
 
 /**
  * Add your docs here.
  */
-public class TurretToRobotSetpoint extends SendableCommandBase {
-
-    private Hyperion hyperion;
+public class TurretToRobotSetpoint extends Command {
 
     private int degree = 0;
 
-    public TurretToRobotSetpoint(Hyperion hyperion) {
-        addRequirements(hyperion);
-        this.hyperion = hyperion;
+    public TurretToRobotSetpoint() {
+        requires(Robot.hyperion);
     }
 
     @Override
@@ -34,8 +31,13 @@ public class TurretToRobotSetpoint extends SendableCommandBase {
         else if (Robot.oi.copilot.xButton.get()) degree = 270;
         else degree = 0;
 
-        hyperion.goToPosition(degree);
+        Robot.hyperion.goToPosition(degree);
         
+    }
+    
+    @Override
+    protected boolean isFinished() {
+        return false;
     }
 
 }

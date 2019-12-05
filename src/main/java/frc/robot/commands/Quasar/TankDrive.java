@@ -8,22 +8,25 @@
 package frc.robot.commands.Quasar;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 
-public class TankDrive extends SendableCommandBase {
+public class TankDrive extends Command {
 
-  private Drivetrain drivetrain;
+  
 
-  public TankDrive(Drivetrain drivetrain) {
-    addRequirements(drivetrain);
-    this.drivetrain = drivetrain;
+  public TankDrive() {
+    requires(Robot.drivetrain);
+    
   }
 
   @Override
   public void execute() {
-    drivetrain.tankDrive(Robot.oi.getLeftThrottle(), Robot.oi.getRightThrottle());
+    Robot.drivetrain.tankDrive(Robot.oi.getLeftThrottle(), Robot.oi.getRightThrottle());
+  }
+  @Override
+  protected boolean isFinished() {
+      return false;
   }
   
 }

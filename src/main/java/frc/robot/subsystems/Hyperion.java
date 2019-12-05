@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.revrobotics.CANDigitalInput;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -15,7 +16,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
 import frc.robot.Constants;
@@ -25,11 +26,15 @@ import frc.robot.commands.Hyperion.TurretToFieldPosition;
 import frc.robot.commands.Hyperion.TurretToRobotSetpoint;
 import frc.robot.misc.REVGains;
 
-public class Hyperion extends SendableSubsystemBase {
+public class Hyperion extends Subsystem {
 
     private final String name = "HYPERION";
 
     private CANSparkMax driver;
+
+    private CANDigitalInput fwdLimSwitch;
+
+    private CANDigitalInput revLimSwitch;
 
     double kP = 0.01;
 
@@ -46,6 +51,12 @@ public class Hyperion extends SendableSubsystemBase {
         driver = new CANSparkMax(RobotMap.HYPERION_DRIVER_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
         driver.setIdleMode(IdleMode.kBrake);
+
+        fwdLimSwitch = new CANDigitalInput(driver, CANDigitalInput.LimitSwitch.kForward, CANDigitalInput.LimitSwitchPolarity.kNormallyOpen);
+        fwdLimSwitch.enableLimitSwitch(true);
+
+        revLimSwitch = new CANDigitalInput(driver, CANDigitalInput.LimitSwitch.kReverse, CANDigitalInput.LimitSwitchPolarity.kNormallyOpen);
+        revLimSwitch.enableLimitSwitch(true);
 
         encoder = new CANEncoder(driver);
 
@@ -71,11 +82,14 @@ public class Hyperion extends SendableSubsystemBase {
             SmartDashboard.putNumber("Turret Velocity", getTurretVelocity());
             SmartDashboard.putNumber("Turret Position", getTurretPosition());
         }
-
-        // setDefaultCommand(new ManualDrive(this));
-        setDefaultCommand(new TurretToRobotSetpoint(this));
-        // setDefaultCommand(new TurretToFieldPosition(this));
         
+    }
+
+    @Override
+    protected void initDefaultCommand() {
+        setDefaultCommand(new ManualDrive());
+        // setDefaultCommand(new TurretToRobotSetpoint(this));
+        // setDefaultCommand(new TurretToFieldPosition(this));
     }
 
     public void init() {
@@ -89,6 +103,8 @@ public class Hyperion extends SendableSubsystemBase {
             SmartDashboard.putNumber("Turret Velocity", getTurretVelocity());
             SmartDashboard.putNumber("Turret Position", getTurretPosition());
         }
+        SmartDashboard.putBoolean("FwdLimitSwitchOn", fwdLimSwitch.get());
+        SmartDashboard.putBoolean("RevLimitSwitchOn", revLimSwitch.get());
     }
 
     public void resetEncPos() {

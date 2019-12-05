@@ -8,7 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.experimental.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.lightning.util.XBoxController;
 import frc.robot.commands.Quasar.ToggleShifter;
 
@@ -23,7 +23,7 @@ public class OI {
 
     public OI() {
         shiftButton = new JoystickButton(drive, 6);
-        shiftButton.whenPressed(new ToggleShifter(Robot.drivetrain));
+        shiftButton.whenPressed(new ToggleShifter());
     }
 
     public double getThrottle() {

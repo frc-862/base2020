@@ -8,19 +8,21 @@
 package frc.robot.commands.Quasar;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 
 /**
  * Add your docs here.
  */
-public class ToggleShifter extends SendableCommandBase{
+public class ToggleShifter extends InstantCommand{
 
-    private Drivetrain drivetrain;
+    
 
-    public ToggleShifter(Drivetrain drivetrain) {
-        addRequirements(drivetrain);
-        this.drivetrain = drivetrain;
+    public ToggleShifter() {
+        requires(Robot.drivetrain);
+        
     }
 
     int count = 0;
@@ -28,22 +30,9 @@ public class ToggleShifter extends SendableCommandBase{
     @Override
     public void execute() {
 
-        if(count == 0) {
-
-            DoubleSolenoid.Value currentGear = drivetrain.getGear();
-
-            if(currentGear.equals(Drivetrain.kHighGear)) drivetrain.lowGear();
-            else if (currentGear.equals(Drivetrain.kLowGear)) drivetrain.highGear();
-            else drivetrain.lowGear();
-
-            System.out.println("Changed.");
-
-        }
-
-        count++;
-
-        end(false);
         
+
+       
     }
 
 }
