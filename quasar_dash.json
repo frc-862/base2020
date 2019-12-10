@@ -1215,6 +1215,28 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "9,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Basic Subsystem",
+              "_source0": "network_table:///LiveWindow/Hyperion/HYPERION",
+              "_title": "Hyperion/HYPERION"
+            }
+          },
+          "11,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Basic Subsystem",
+              "_source0": "network_table:///LiveWindow/Drivetrain/DRIVETRAIN",
+              "_title": "Drivetrain/DRIVETRAIN"
+            }
           }
         }
       }
@@ -1469,6 +1491,32 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Turret Position",
               "_title": "/SmartDashboard/Turret Position"
+            }
+          },
+          "11,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/FwdLimitSwitchOn",
+              "_title": "/SmartDashboard/FwdLimitSwitchOn",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "11,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/RevLimitSwitchOn",
+              "_title": "/SmartDashboard/RevLimitSwitchOn",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
