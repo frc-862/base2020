@@ -16,27 +16,29 @@ import frc.robot.subsystems.Hyperion;
  */
 public class TurretToFieldPosition extends Command {
 
-    
-
     private double heading = 0.0d;
 
     public TurretToFieldPosition() {
-        requires(Robot.hyperion);   
+        requires(Robot.hyperion);
     }
 
     @Override
     public void execute() {
 
-        if (Robot.oi.copilot.aButton.get()) heading = 180.0d;
-        else if (Robot.oi.copilot.bButton.get()) heading = 90.0d;
-        else if (Robot.oi.copilot.xButton.get()) heading = 270.0d;
-        else heading = 0.0d;
+        if (Robot.oi.copilot.bButton.get())
+            heading = 90.0d;
+        else if (Robot.oi.copilot.xButton.get())
+            heading = -90.0d;
+        else
+            heading = 0.0d;
 
         Robot.hyperion.goToHeading(heading);
-        
+
     }
-@Override
-protected boolean isFinished() {
-    return false;
-}
+
+    @Override
+    protected boolean isFinished() {
+        return false;
+    }
+    
 }

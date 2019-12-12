@@ -25,6 +25,6 @@ public class RobotMap {
 
     // HYPERION
     public static final int HYPERION_DRIVER_CAN_ID = 7;
-    public static final int PIGEON_ID = 0; // TODO - Fix
+    public static final int PIGEON_ID = 8;
 
 }

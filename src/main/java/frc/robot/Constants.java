@@ -32,5 +32,9 @@ public class Constants extends ConstantBase {
 
     // HYPERION
     public static REVGains hyperionGains = new REVGains(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, NEO_MAX_RPM); // P, I, D, FF, Iz, MaxOutput, MinOutput, MaxRPM
-
+    public static final double MAX_TURRET_POWER = 0.33d;
+    public static final double FWD_LIMIT_DEG = 151.0d;
+    public static final double REV_LIMIT_DEG = -151.0d;
+    public static final double FWD_LIMIT_TICKS = FWD_LIMIT_DEG / (360 / 76.55);
+    public static final double REV_LIMIT_TICKS = REV_LIMIT_DEG / (360 / 76.55);
 }

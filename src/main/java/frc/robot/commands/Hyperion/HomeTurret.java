@@ -9,23 +9,26 @@ package frc.robot.commands.Hyperion;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Hyperion;
 
-public class ManualDrive extends Command {
+public class HomeTurret extends Command {
 
-    public ManualDrive() {
+    public HomeTurret() {
         requires(Robot.hyperion);
     }
 
     @Override
+    protected void initialize() {
+
+    }
+
+    @Override
     public void execute() {
-        Robot.hyperion.setPower(Robot.oi.getTurretPwr());
+        Robot.hyperion.homeTurret();
     }
 
     @Override
     protected boolean isFinished() {
-        return false;
+        return (Math.abs(Robot.hyperion.getTurretPosition()) < 1.5d) ? true : false;
     }
 
 }

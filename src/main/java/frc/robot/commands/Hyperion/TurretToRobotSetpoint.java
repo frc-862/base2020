@@ -26,15 +26,17 @@ public class TurretToRobotSetpoint extends Command {
     @Override
     public void execute() {
 
-        if (Robot.oi.copilot.aButton.get()) degree = 180;
-        else if (Robot.oi.copilot.bButton.get()) degree = 90;
-        else if (Robot.oi.copilot.xButton.get()) degree = 270;
-        else degree = 0;
+        if (Robot.oi.copilot.bButton.get())
+            degree = 90;
+        else if (Robot.oi.copilot.xButton.get())
+            degree = -90;
+        else
+            degree = 0;
 
         Robot.hyperion.goToPosition(degree);
-        
+
     }
-    
+
     @Override
     protected boolean isFinished() {
         return false;

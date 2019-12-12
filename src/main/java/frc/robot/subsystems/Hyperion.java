@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.Hyperion.ManualDrive;
 import frc.robot.commands.Hyperion.TurretToFieldPosition;
@@ -36,7 +37,7 @@ public class Hyperion extends Subsystem {
 
     private CANDigitalInput revLimSwitch;
 
-    double kP = 0.01;
+    double kP = 0.0330; // RIP
 
     private CANEncoder encoder;
 
@@ -60,7 +61,8 @@ public class Hyperion extends Subsystem {
 
         encoder = new CANEncoder(driver);
 
-        // pigeon = new PigeonIMU(RobotMap.PIGEON_ID); // until it gets plugged in // check firmware
+        pigeon = new PigeonIMU(RobotMap.PIGEON_ID);
+        pigeon.configFactoryDefault();
 
         PIDFController = driver.getPIDController();
 
@@ -88,8 +90,8 @@ public class Hyperion extends Subsystem {
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(new ManualDrive());
-        // setDefaultCommand(new TurretToRobotSetpoint(this));
-        // setDefaultCommand(new TurretToFieldPosition(this));
+        // setDefaultCommand(new TurretToRobotSetpoint());
+        // setDefaultCommand(new TurretToFieldPosition());
     }
 
     public void init() {
@@ -98,13 +100,24 @@ public class Hyperion extends Subsystem {
 
     @Override
     public void periodic() {
+
         REVGains.updateGainsFromDash(name, Constants.hyperionGains, PIDFController);
         if(Constants.HYPERION_DASHBOARD_ENABLED) {
             SmartDashboard.putNumber("Turret Velocity", getTurretVelocity());
             SmartDashboard.putNumber("Turret Position", getTurretPosition());
         }
+
         SmartDashboard.putBoolean("FwdLimitSwitchOn", fwdLimSwitch.get());
         SmartDashboard.putBoolean("RevLimitSwitchOn", revLimSwitch.get());
+        SmartDashboard.putNumber("Turret_Gyro", getTurretHeading());
+
+        double[] ypr = new double[3];
+        pigeon.getYawPitchRoll(ypr);
+        SmartDashboard.putNumber("YPR", ypr[0]);
+
+        if(fwdLimSwitch.get()) encoder.setPosition(Constants.FWD_LIMIT_TICKS);
+        if(revLimSwitch.get()) encoder.setPosition(Constants.REV_LIMIT_TICKS);   
+
     }
 
     public void resetEncPos() {
@@ -112,11 +125,11 @@ public class Hyperion extends Subsystem {
     }
 
     public void setPower(double pwr) {
-        driver.set(pwr);
+        driver.set(pwr * Constants.MAX_TURRET_POWER);
     }
 
     public void homeTurret() {
-        PIDFController.setReference(0.0, ControlType.kPosition);
+        Robot.hyperion.goToPosition(0);
     }
 
     public void setPosition(double position) {
@@ -139,14 +152,14 @@ public class Hyperion extends Subsystem {
         return encoder.getVelocity();
     }
 
-    public void goToPosition(int degree) {
-        double error = degree - getTurretPosition();
+    public void goToPosition(int targetDegree) {
+        double error = targetDegree - getTurretPosition();
         double power = error * kP;
         setPower(power);
     }
 
-    public void goToHeading(double heading) {
-        double error = heading - getTurretHeading();
+    public void goToHeading(double targetHeading) {
+        double error = targetHeading - getTurretHeading();
         double power = error * kP;
         setPower(power);
     }

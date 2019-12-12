@@ -9,7 +9,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.util.XBoxController;
+import frc.robot.commands.Hyperion.HomeTurret;
+import frc.robot.commands.Hyperion.ManualDrive;
+import frc.robot.commands.Hyperion.TurretToFieldPosition;
+import frc.robot.commands.Hyperion.TurretToRobotSetpoint;
 import frc.robot.commands.Quasar.ToggleShifter;
 
 public class OI {
@@ -22,8 +27,15 @@ public class OI {
     JoystickButton shiftButton;
 
     public OI() {
+
         shiftButton = new JoystickButton(drive, 6);
         shiftButton.whenPressed(new ToggleShifter());
+
+        SmartDashboard.putData("Turret_Manual_Ctrl", new ManualDrive());
+        SmartDashboard.putData("Turret_Field_Ctrl", new TurretToFieldPosition());
+        SmartDashboard.putData("Turret_Robot_Ctrl", new TurretToRobotSetpoint());
+        SmartDashboard.putData("HOME_TURRET", new HomeTurret());
+
     }
 
     public double getThrottle() {
