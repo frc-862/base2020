@@ -12,7 +12,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lightning.logging.DataLogger;
 import frc.robot.commands.ArcadeDrive;
 
@@ -20,7 +20,7 @@ import javax.xml.crypto.Data;
 import java.util.function.Consumer;
 
 
-public class Drivetrain extends SendableSubsystemBase
+public class Drivetrain extends SubsystemBase
 {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.

@@ -1,11 +1,11 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.experimental.command.SendableCommandBase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drivetrain;
 
-public class ArcadeDrive extends SendableCommandBase {
+public class ArcadeDrive extends CommandBase {
     private Drivetrain drivetrain;
     double left;
     double right;
@@ -36,7 +36,7 @@ public class ArcadeDrive extends SendableCommandBase {
 //            drivetrain.setPower(left,right);
 //        }else {
 //            first=true;
-            drivetrain.curvatureDrive(Robot.oi.getThrottle(), Robot.oi.getTurn(), Robot.oi.getQuickTurn());
+        drivetrain.curvatureDrive(Robot.oi.getThrottle(), Robot.oi.getTurn(), Robot.oi.getQuickTurn());
 //        }
     }
 }

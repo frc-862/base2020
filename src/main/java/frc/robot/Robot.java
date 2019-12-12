@@ -14,8 +14,8 @@ import frc.lightning.LightningRobot;
 import frc.robot.subsystems.Core;
 import frc.robot.subsystems.Drivetrain;
 
-import edu.wpi.first.wpilibj.experimental.command.Command;
-import edu.wpi.first.wpilibj.experimental.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
  * The VM is configured to automatically run this class, and to call the

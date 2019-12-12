@@ -9,14 +9,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.experimental.command.SendableSubsystemBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.logging.DataLogger;
 import frc.robot.Robot;
 
 
-public class Core extends SendableSubsystemBase
+public class Core extends SubsystemBase
 {
     Compressor compressor;
     AHRS navx;
@@ -42,11 +42,21 @@ public class Core extends SendableSubsystemBase
         navx.reset();
     }
 
-    public double getYaw() { return (navx.getYaw());}
-    public double getRoll(){ return navx.getRoll();}
-    public double getPitch(){ return navx.getPitch();}
-    public double getAngle(){ return navx.getAngle();}
-    public double getAngleAdj(){ return navx.getAngleAdjustment();}
+    public double getYaw() {
+        return (navx.getYaw());
     }
+    public double getRoll() {
+        return navx.getRoll();
+    }
+    public double getPitch() {
+        return navx.getPitch();
+    }
+    public double getAngle() {
+        return navx.getAngle();
+    }
+    public double getAngleAdj() {
+        return navx.getAngleAdjustment();
+    }
+}
 
 
