@@ -1,7 +1,5 @@
 package frc.robot;
 
-import com.revrobotics.CANPIDController;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.ConstantBase;
 import frc.robot.misc.REVGains;

@@ -21,8 +21,8 @@ public class VelocityTankDrive extends Command {
     @Override
     public void execute() {
 
-        double targetLeft = (Math.abs(Robot.oi.getLeftThrottle()) < 0.1) ? 0.0 : Robot.oi.getLeftThrottle() * Constants.leftGains.getMaxRPM();
-        double targetRight = (Math.abs(Robot.oi.getRightThrottle()) < 0.1) ? 0.0 : Robot.oi.getRightThrottle() * Constants.rightGains.getMaxRPM();
+        double targetLeft = (Math.abs(Robot.oi.getLeftThrottleInput()) < 0.1) ? 0.0 : Robot.oi.getLeftThrottleInput() * Constants.leftGains.getMaxRPM();
+        double targetRight = (Math.abs(Robot.oi.getRightThrottleInput()) < 0.1) ? 0.0 : Robot.oi.getRightThrottleInput() * Constants.rightGains.getMaxRPM();
         
         SmartDashboard.putNumber("Left Target", targetLeft);
         SmartDashboard.putNumber("Right Target", targetRight);

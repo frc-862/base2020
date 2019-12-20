@@ -9,35 +9,65 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.lightning.util.XBoxController;
 import frc.robot.commands.Hyperion.HomeTurret;
 import frc.robot.commands.Hyperion.ManualDrive;
 import frc.robot.commands.Hyperion.TurretToFieldPosition;
 import frc.robot.commands.Hyperion.TurretToRobotSetpoint;
-import frc.robot.commands.Quasar.ToggleShifter;
+import frc.robot.commands.Quasar.TankDrive;
+import frc.robot.commands.Quasar.VelocityTankDrive;
 
 public class OI {
     
-    Joystick drive = new Joystick(0);
-    Joystick leftJoy; // = new Joystick(1/*JoystickConstants.DRIVER_LEFT_JOY*/);
-    Joystick rightJoy; // = new Joystick(JoystickConstants.DRIVER_RIGHT_JOY);
-    public XBoxController copilot = new XBoxController(JoystickConstants.COPILOT);
+    Joystick drive;
+    public XBoxController copilot;
 
     JoystickButton shiftButton;
 
     public OI() {
 
+        drive = new Joystick(JoystickConstants.DRIVER);
+        copilot = new XBoxController(JoystickConstants.COPILOT);
+
         shiftButton = new JoystickButton(drive, 6);
-        shiftButton.whenPressed(new ToggleShifter());
+
+        initializeButtons();
+
+        initializeDashboardCommands();
+
+    }
+
+    private void initializeButtons() {
+        shiftButton.whenPressed(new InstantCommand(Robot.drivetrain, () -> Robot.drivetrain.chngGear()));
+    }
+
+    private void initializeDashboardCommands() {
 
         SmartDashboard.putData("Turret_Manual_Ctrl", new ManualDrive());
         SmartDashboard.putData("Turret_Field_Ctrl", new TurretToFieldPosition());
         SmartDashboard.putData("Turret_Robot_Ctrl", new TurretToRobotSetpoint());
         SmartDashboard.putData("HOME_TURRET", new HomeTurret());
 
+        SmartDashboard.putData("OpenLoop", new TankDrive());
+        SmartDashboard.putData("ClosedLoop", new VelocityTankDrive());
+
     }
 
+    public double getRightThrottleInput() {
+        return -drive.getRawAxis(5);
+    }
+
+    public double getLeftThrottleInput() {
+        return -drive.getRawAxis(1);
+    }
+
+    public double getManualTurretPwrInput() {
+        return (copilot.getRawAxis(3) - copilot.getRawAxis(2));
+    }
+
+    
     public double getThrottle() {
         final double stick = copilot.getLeftStickY();
         return stick * stick * Math.signum(stick);
@@ -52,20 +82,5 @@ public class OI {
         return copilot.aButton.get();
     }
 
-    public double getRightThrottle() {
-        // return -rightJoy.getRawAxis(JoystickConstants.THRUSTMASTER_Y_AXIS);
-        return -drive.getRawAxis(5);
-    }
-
-    public double getLeftThrottle() {
-        // return -leftJoy.getRawAxis(JoystickConstants.THRUSTMASTER_Y_AXIS);
-        return -drive.getRawAxis(1);
-    }
-
-    public double getTurretPwr() {
-        // return Math.pow(-copilot.getRightStickX(), 3);
-        // return Math.pow(-drive.getRawAxis(4), 3);
-        return (copilot.getRawAxis(3) - copilot.getRawAxis(2));
-    }
 
 }

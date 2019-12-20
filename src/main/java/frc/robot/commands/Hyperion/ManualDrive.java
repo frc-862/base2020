@@ -20,7 +20,7 @@ public class ManualDrive extends Command {
 
     @Override
     public void execute() {
-        Robot.hyperion.setPower(Robot.oi.getTurretPwr());
+        Robot.hyperion.setPower(Robot.oi.getManualTurretPwrInput());
     }
 
     @Override

@@ -26,7 +26,6 @@ import frc.lightning.logging.DataLogger;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.commands.Quasar.ArcadeDrive;
-import frc.robot.commands.Quasar.OtherTankDrive;
 import frc.robot.commands.Quasar.TankDrive;
 import frc.robot.commands.Quasar.VelocityTankDrive;
 import frc.robot.misc.Gains;
@@ -40,39 +39,19 @@ public class Drivetrain extends Subsystem {
     private final String name = "DRIVETRAIN";
     
     public static final DoubleSolenoid.Value kHighGear = DoubleSolenoid.Value.kForward;
-
     public static final DoubleSolenoid.Value kLowGear = DoubleSolenoid.Value.kReverse;
-    
-    public static enum DriveStyle {
 
-        ARCADE_DRIVE("Arcade Drive"),
-        TANK_DRIVE("Open Loop - Tank Drive"),
-        VELOCITY_TANK_DRIVE("Closed Loop - Tank Drive"),
-        TEST_WEIRDNESS("OOPS");
-
-        private String displayId = "";
-
-        DriveStyle(String displayId) {
-            this.displayId = displayId;
-        }
-
-        public String getDisplayId() {
-            return this.displayId;
-        }
-
-    }
-
-    private CANSparkMax left1;
-    private CANSparkMax left2;
-    private CANSparkMax left3;
+    private CANSparkMax leftMaster;
+    private CANSparkMax leftSlave1;
+    private CANSparkMax leftSlave2;
     
     private CANEncoder leftEncoder;
 
     private CANPIDController leftPIDFController;
 
-    private CANSparkMax right1;
-    private CANSparkMax right2;
-    private CANSparkMax right3;
+    private CANSparkMax rightMaster;
+    private CANSparkMax rightSlave1;
+    private CANSparkMax rightSlave2;
 
     private CANEncoder rightEncoder;
 
@@ -80,58 +59,47 @@ public class Drivetrain extends Subsystem {
 
     private DoubleSolenoid shifter;
 
-    private SpeedControllerGroup leftGroup;
-    private SpeedControllerGroup rightGroup;
+    // private SpeedControllerGroup leftGroup;
+    // private SpeedControllerGroup rightGroup;
 
-    private DifferentialDrive drive;
+    // private DifferentialDrive drive;
 
-    DriveStyle driveStyle;
-
-    public Drivetrain(Drivetrain.DriveStyle driveStyle) {
-
-        this.driveStyle = driveStyle;
+    public Drivetrain() {
 
         setName(name);
 
-        left1 = new CANSparkMax(RobotMap.LEFT_1_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        left2 = new CANSparkMax(RobotMap.LEFT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        left3 = new CANSparkMax(RobotMap.LEFT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        leftMaster = new CANSparkMax(RobotMap.LEFT_1_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        leftSlave1 = new CANSparkMax(RobotMap.LEFT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        leftSlave2 = new CANSparkMax(RobotMap.LEFT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
         
-        leftEncoder = new CANEncoder(left1);
+        leftEncoder = new CANEncoder(leftMaster);
 
-        leftPIDFController = left1.getPIDController();
+        leftPIDFController = leftMaster.getPIDController();
 
-        right1 = new CANSparkMax(RobotMap.RIGHT_1_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        right2 = new CANSparkMax(RobotMap.RIGHT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        right3 = new CANSparkMax(RobotMap.RIGHT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        rightMaster = new CANSparkMax(RobotMap.RIGHT_1_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        rightSlave1 = new CANSparkMax(RobotMap.RIGHT_2_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+        rightSlave2 = new CANSparkMax(RobotMap.RIGHT_3_CAN_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
         LiveWindow.add(this);
 
-        rightEncoder = new CANEncoder(right1);
+        rightEncoder = new CANEncoder(rightMaster);
 
-        rightPIDFController = right1.getPIDController();
+        rightPIDFController = rightMaster.getPIDController();
 
         shifter = new DoubleSolenoid(RobotMap.SHIFTER_MODULE_NUM, RobotMap.SHIFTER_FWD_CHANNEL, RobotMap.SHIFTER_REVERSE_CHANNEL);
 
-        // initMotorDirections();
-
-        right2.follow(right1, true);
-        right3.follow(right1, false); 
-           
-        left2.follow(left1, true);
-        left3.follow(left1, false);
+        initMotorDirections();
 
         withEachMotor((m) -> m.setOpenLoopRampRate(Constants.OPEN_LOOP_RAMP_RATE));
         withEachMotor((m) -> m.setClosedLoopRampRate(Constants.CLOSE_LOOP_RAMP_RATE));
         withEachMotor((m) -> m.setIdleMode(IdleMode.kBrake));
-        // withEachMotor((m) -> m.setIdleMode(IdleMode.kCoast));
 
-        leftGroup = new SpeedControllerGroup(left1, left2, left3);
-        rightGroup = new SpeedControllerGroup(right1, right2, right3);
+        // leftGroup = new SpeedControllerGroup(left1, left2, left3);
+        // rightGroup = new SpeedControllerGroup(right1, right2, right3);
 
-        drive = new DifferentialDrive(leftGroup, rightGroup);
+        // drive = new DifferentialDrive(leftGroup, rightGroup);
 
-        drive.setSafetyEnabled(false);
+        // drive.setSafetyEnabled(false);
 
         leftPIDFController.setP(Constants.leftGains.getkP());
         leftPIDFController.setI(Constants.leftGains.getkI());
@@ -166,20 +134,7 @@ public class Drivetrain extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        switch(driveStyle) {
-            case ARCADE_DRIVE:
-                setDefaultCommand(new ArcadeDrive());
-                break;
-            case VELOCITY_TANK_DRIVE:
-                setDefaultCommand(new VelocityTankDrive());
-                break;
-            case TEST_WEIRDNESS:
-                setDefaultCommand(new OtherTankDrive());
-                break;
-            default:
-                setDefaultCommand(new TankDrive());
-                break;
-        }
+        setDefaultCommand(new TankDrive());
     }
 
     public void init() {
@@ -200,21 +155,21 @@ public class Drivetrain extends Subsystem {
     }
 
     private void withEachMotor(Consumer<CANSparkMax> op) {
-        op.accept(left1);
-        op.accept(left2);
-        op.accept(left3);
-        op.accept(right1);
-        op.accept(right2);
-        op.accept(right3);
+        op.accept(leftMaster);
+        op.accept(leftSlave1);
+        op.accept(leftSlave2);
+        op.accept(rightMaster);
+        op.accept(rightSlave1);
+        op.accept(rightSlave2);
     }
 
     private void initMotorDirections() {
-        left1.setInverted(false);
-        left2.setInverted(true);
-        left3.setInverted(false);
-        right1.setInverted(false);
-        right2.setInverted(true);
-        right3.setInverted(false);
+        rightMaster.setInverted(true);
+        rightSlave1.follow(rightMaster, true);
+        rightSlave2.follow(rightMaster, false); 
+        leftMaster.setInverted(false);
+        leftSlave1.follow(leftMaster, true);
+        leftSlave2.follow(leftMaster, false);
     }
 
     public void highGear() {
@@ -225,33 +180,19 @@ public class Drivetrain extends Subsystem {
         shifter.set(kLowGear);
     }
 
-    public DoubleSolenoid.Value getGear() {
-        return shifter.get();
+    public boolean isHighGear() {
+        if(shifter.get().equals(kHighGear)) return true;
+        return false;
+    }
+
+    public void chngGear() {
+        if(isHighGear()) lowGear();
+        else highGear();
     }
 
     public void setPower(double left, double right) {
-        drive.tankDrive(left, right, true);
-    }
-
-    public void arcadeDrive(double speed, double rotation) {
-        drive.arcadeDrive(speed, rotation, false);
-    }
-
-    public void curvatureDrive(double speed, double rotation) {
-        drive.curvatureDrive(speed, rotation, false);
-    }
-
-    public void curvatureDrive(double speed, double rotation, boolean quickTurn) {
-        drive.curvatureDrive(speed*.5, -rotation, quickTurn);
-    }
-
-    public void tankDrive(double left, double right){
-        drive.tankDrive(left, right, true);
-    }
-
-    public void otherTankDrive (double left, double right) {
-        right1.set(-right);
-        left1.set(left);
+        rightMaster.set(right);
+        leftMaster.set(left);
     }
 
     public void setVelocity(double left, double right) {   
@@ -278,6 +219,14 @@ public class Drivetrain extends Subsystem {
 
     public double getRightVelocity() {
         return rightEncoder.getVelocity();
+    }
+
+    public CANSparkMax getRightMaster() {
+        return rightMaster;
+    }
+
+    public CANSparkMax getLeftMaster() {
+        return leftMaster;
     }
 
 }

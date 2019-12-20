@@ -15,7 +15,6 @@ import frc.lightning.LightningRobot;
 import frc.robot.subsystems.Core;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Hyperion;
-import frc.robot.subsystems.Drivetrain.DriveStyle;
 
 public class Robot extends LightningRobot {
 
@@ -27,9 +26,7 @@ public class Robot extends LightningRobot {
 
     public Robot() {
         super();
-        drivetrain = new Drivetrain(DriveStyle.TANK_DRIVE);
-        // drivetrain = new Drivetrain(DriveStyle.VELOCITY_TANK_DRIVE);
-        // drivetrain = new Drivetrain(DriveStyle.TEST_WEIRDNESS);
+        drivetrain = new Drivetrain();
         hyperion = new Hyperion();
         core = new Core();
         oi = new OI();

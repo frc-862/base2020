@@ -3,8 +3,7 @@ package frc.robot;
 public class JoystickConstants {
 
     // JOYSTICK PORTS
-    public static final int DRIVER_LEFT_JOY = 0;
-    public static final int DRIVER_RIGHT_JOY = 1;
+    public static final int DRIVER = 0;
     public static final int COPILOT = 2;
 
     // JOYSTICK AXIS

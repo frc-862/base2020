@@ -34,7 +34,7 @@ public class ArcadeDrive extends Command {
 //            drivetrain.setPower(left,right);
 //        }else {
 //            first=true;
-            Robot.drivetrain.curvatureDrive(Robot.oi.getThrottle(), Robot.oi.getTurn(), Robot.oi.getQuickTurn());
+//            Robot.drivetrain.curvatureDrive(Robot.oi.getThrottle(), Robot.oi.getTurn(), Robot.oi.getQuickTurn());
 //        }
     }
 

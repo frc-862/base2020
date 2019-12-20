@@ -13,20 +13,22 @@ import frc.robot.subsystems.Drivetrain;
 
 public class TankDrive extends Command {
 
-  
+    public TankDrive() {
+        requires(Robot.drivetrain);
+    }
 
-  public TankDrive() {
-    requires(Robot.drivetrain);
-    
-  }
+    @Override
+    public void execute() {
 
-  @Override
-  public void execute() {
-    Robot.drivetrain.tankDrive(Robot.oi.getLeftThrottle(), Robot.oi.getRightThrottle());
-  }
-  @Override
-  protected boolean isFinished() {
-      return false;
-  }
-  
+        double targetLeft = (Math.abs(Robot.oi.getLeftThrottleInput()) < 0.1) ? 0.0 : Math.pow(Robot.oi.getLeftThrottleInput(), 3);
+        double targetRight = (Math.abs(Robot.oi.getRightThrottleInput()) < 0.1) ? 0.0 : Math.pow(Robot.oi.getRightThrottleInput(), 3);
+
+        Robot.drivetrain.setPower(targetLeft, targetRight);
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return false;
+    }
+
 }
