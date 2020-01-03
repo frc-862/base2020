@@ -12,11 +12,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lightning.logging.DataLogger;
-import frc.robot.commands.ArcadeDrive;
-
-import javax.xml.crypto.Data;
+import frc.robot.Robot;
 import java.util.function.Consumer;
 
 
@@ -62,7 +61,10 @@ public class Drivetrain extends SubsystemBase
         rightGroup = new SpeedControllerGroup(right1, right2, right3);
         drive = new DifferentialDrive(leftGroup, rightGroup);
 
-        setDefaultCommand(new ArcadeDrive(this));
+//        setDefaultCommand(new ArcadeDrive(this));
+        setDefaultCommand(new RunCommand(() ->
+                drive.curvatureDrive(Robot.oi.getThrottle() * 0.5, Robot.oi.getTurn(), Robot.oi.getQuickTurn()),
+                this));
 
         DataLogger.addDataElement("leftVelocity", () -> left1Encoder.getVelocity());
         DataLogger.addDataElement("rightVelocity", () -> right1Encoder.getVelocity());

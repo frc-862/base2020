@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class LightningRobot extends TimedRobot {
     public ConstantBase constants;
-    public DataLogger dataLogger;
+    public DataLogger dataLogger = DataLogger.getLogger();
 
     private int counter = 0;
     private int medPriorityFreq = (int) Math.round(0.1 / getPeriod());
